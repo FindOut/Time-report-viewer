@@ -1,5 +1,6 @@
 var React = require('react');
 
+require('./filter.scss');
 module.exports = React.createClass({
     datePickers: [],
 
@@ -10,21 +11,21 @@ module.exports = React.createClass({
         var multiple = filterProperty.multiple ? 'multiple' : '';
 
         return (
-            <span>
-                <label>{filterProperty.label}: </label>
+            <li>
+                <label>{filterProperty.label}: </label><br/>
                 <select multiple={filterProperty.multiple} ref={filterProperty.serverProperty}>
                         {renderedOptions}
                 </select>
-            </span>
+            </li>
         );
     },
     createDateFilter: function(filterProperty){
         this.datePickers.push("filter_" +filterProperty.serverProperty);
         return (
-            <span>
-                <label>{filterProperty.label}</label>
+            <li>
+                <label>{filterProperty.label}: </label><br/>
                 <input id={"filter_" + filterProperty.serverProperty} ref={filterProperty.serverProperty}/>
-            </span>
+            </li>
         );
     },
     filterChange: function(){
@@ -62,9 +63,12 @@ module.exports = React.createClass({
         }.bind(this));
 
         return (
-            <div>
+            <div id="filter-container">
+                <h3>Filters</h3>
                 <form onChange={this.filterChange}>
-                    {renderedFilters}
+                    <ul>
+                        {renderedFilters}
+                    </ul>
                 </form>
             </div>
         )

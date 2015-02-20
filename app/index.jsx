@@ -24,7 +24,7 @@ var App = React.createClass({
         };
     },
     componentDidMount: function(){
-        ActivityStore.listen(this.activitiesUptadetd);
+        ActivityStore.listen(this.activitiesUpdated);
         WorkdayStore.listen(this.workdaysUpdated)
     },
     workdaysUpdated: function(workdays){
@@ -32,7 +32,7 @@ var App = React.createClass({
             workdays: workdays
         });
     },
-    activitiesUptadetd: function(activities){
+    activitiesUpdated: function(activities){
         this.setState({
             activities: activities
         });
@@ -45,13 +45,6 @@ var App = React.createClass({
     render : function(){
         var filterProperties = [
             {
-                label: 'Activities',
-                type: 'select',
-                serverProperty: 'activities',
-                multiple: true,
-                data: this.state.activities
-            },
-            {
                 label: 'From',
                 serverProperty: 'from',
                 type: 'date'
@@ -60,6 +53,13 @@ var App = React.createClass({
                 label: 'To',
                 serverProperty: 'to',
                 type: 'date'
+            },
+            {
+                label: 'Activities',
+                type: 'select',
+                serverProperty: 'activities',
+                multiple: true,
+                data: this.state.activities
             }
         ];
 
