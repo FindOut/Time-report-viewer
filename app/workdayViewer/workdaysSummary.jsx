@@ -1,28 +1,46 @@
-var React = require('react');
+var React = require('react'),
+    WorkdayStore = require('../stores/WorkdayStore');
 
 var monthNames = [ "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December" ];
 
 module.exports = React.createClass({
-    render: function () {
+    workdaysUpdated: function(workdays){
+        this.setState({
+            workdays: workdays,
+            currentActivities: WorkdayStore.getCurrentActivities()
+        });
+    },
 
+
+    getInitialState: function () {
+        return {
+            currentActivities: [],
+            workdays: []
+        }
+    },
+
+    componentDidMount: function () {
+        WorkdayStore.listen(this.workdaysUpdated);
+    },
+
+    render: function () {
         var months = {};
-        if(this.props.workdays !== undefined){
-            console.log(this.props);
-            this.props.workdays.forEach(function(workday){
+        //console.log(this.state.workdays);
+        if(this.state.workdays !== undefined){
+            this.state.workdays.forEach(function(workday){
                 var workdayMonth = monthNames[new Date (workday.date).getMonth()];
                 months[workdayMonth] = (months[workdayMonth] || 0) + workday.hours;
             });
         }
 
+        //console.log(months);
 
         var workdays = Object.keys(months).map(function(month){
             return (
                 <li>{month}: {months[month]}</li>
             );
         });
-
-        //<ul>{workdays}</ul>
 
         return (
             <div id="workdaysSummary">

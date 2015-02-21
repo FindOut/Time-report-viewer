@@ -1,7 +1,8 @@
 var React = require('react'),
     WorkdayStore = require('../stores/WorkdayStore'),
     UserStore = require('../stores/UserStore'),
-    WorkdaysSummary = require('./workdaysSummary');
+    WorkdaysDetails = require('./workdaysDetails'),
+    WorkdaysSummary = require('./workdaysSummary'),
     UsersInWorkdaysSelection =require('./usersInWorkdaysSelection');
 
 

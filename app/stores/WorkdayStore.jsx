@@ -4,20 +4,37 @@ var _ = require('lodash');
 module.exports = Reflux.createStore({
     workdays: [],
 
+    currentActivities: [],
+    currentUsers: [],
+
     getWorkdays: function(){
         return this.workdays;
     },
 
-    getCurrentUsers: function(){
-        var users = [];
-        this.workdays.forEach(function(workday){
-            if(!_.contains(users, workday.user.id)){
-                users.push(workday.user.id)
-            }
-        });
-
-        return users;
+    getCurrentActivities: function(){
+        return this.users;
     },
+
+    getCurrentUsers: function(){
+        return this.users;
+    },
+
+    setMetaProperties: function(){
+        // Get activity IDs from workdays
+        this.activities = _.uniq(this.workdays.map(function(workday){
+            return workday.activity.id
+        }));
+
+        // Get user IDs from workdays
+        this.users = _.uniq(this.workdays.map(function(workday){
+            return workday.user.id
+        }));
+    },
+
+    setCurrentActivities: function(){
+        var activities = [];
+    },
+
     fetchWorkdays: function(filterData){
         $.ajax({
             url: "http://ceras.se/report/workdays.json?&max=-1",
@@ -25,6 +42,7 @@ module.exports = Reflux.createStore({
             data: filterData
         }).then(function(data){
             this.workdays = data;
+            this.setMetaProperties();
             this.trigger(this.workdays);
         }.bind(this));
     }
