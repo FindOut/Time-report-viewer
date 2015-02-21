@@ -15,7 +15,6 @@ module.exports = Reflux.createStore({
                 users.push(workday.user.id)
             }
         });
-        console.log(users);
 
         return users;
     },

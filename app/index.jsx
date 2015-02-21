@@ -81,7 +81,7 @@ var App = React.createClass({
 
 
         return (
-            <div>
+            <div id="pageContainer">
                 <Filter filters={filterProperties} onChange={this.onFilterChange}/>
                 <WorkdayViwer/>
             </div>
