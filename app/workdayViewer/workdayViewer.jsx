@@ -41,10 +41,8 @@ module.exports = React.createClass({
     render: function(){
         return (
             <div id="workdayViewer">
-                <div style={{display:'block'}}>
-                    <WorkdaysSummary workdays={this.state.workdays} />
-                    <UsersInWorkdaysSelection users={this.state.currentUsers}/>
-                </div>
+                <WorkdaysSummary workdays={this.state.workdays} />
+                <UsersInWorkdaysSelection users={this.state.currentUsers}/>
                 <WorkdaysDetails
                     workdays={this.state.workdays}
                     activities={this.state.currentActivities}/>

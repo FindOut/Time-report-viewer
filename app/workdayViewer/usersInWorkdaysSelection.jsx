@@ -12,7 +12,7 @@ module.exports = React.createClass({
 
         return (
             <div id="usersInSelection">
-                <h4>Users in selection</h4>
+                <h4>Users</h4>
                 <ul>
                     {renderedUsers}
                 </ul>

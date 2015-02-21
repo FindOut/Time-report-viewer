@@ -18,6 +18,7 @@ module.exports = React.createClass({
 
         return (
             <div id="workdaysDetails">
+                <h3>Activities details</h3>
                 {renderedActivities}
             </div>
         )

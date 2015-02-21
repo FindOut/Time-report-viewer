@@ -38,12 +38,15 @@ module.exports = React.createClass({
 
         var workdays = Object.keys(months).map(function(month){
             return (
-                <li>{month}: {months[month]}</li>
+                <li>{month.substr(0, 3)}<br/>
+                    {months[month]}
+                </li>
             );
         });
 
         return (
             <div id="workdaysSummary">
+                <h3>Monthly summary</h3>
                 <ul>
                     {workdays}
                 </ul>
