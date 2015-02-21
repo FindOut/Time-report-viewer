@@ -12,7 +12,7 @@ module.exports = Reflux.createStore({
     },
 
     getCurrentActivities: function(){
-        return this.users;
+        return this.activities;
     },
 
     getCurrentUsers: function(){
