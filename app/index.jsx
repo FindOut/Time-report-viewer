@@ -7,13 +7,11 @@ var Reflux = require('reflux');
 require('../app/index.scss');
 
 var ActivityStore = require('../app/stores/ActivityStore');
+var UserStore = require('../app/stores/UserStore');
 var WorkdayStore = require('../app/stores/WorkdayStore');
 
 var Filter = require('../app/filter/Filter.jsx');
-var WorkdayViwer = require('../app/workdayViewer/workdayViewer');
-
-var monthNames = [ "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December" ];
+var WorkdayViewer = require('../app/workdayViewer/workdayViewer');
 
 var App = React.createClass({
     activities: [],
@@ -22,21 +20,29 @@ var App = React.createClass({
         return {
             activities: [],
             workdays: [],
+            users: [],
             filters: {}
         };
     },
     componentDidMount: function(){
         ActivityStore.listen(this.activitiesUpdated);
+        UserStore.listen(this.usersUpdated);
         WorkdayStore.listen(this.workdaysUpdated)
+    },
+
+    activitiesUpdated: function(activities){
+        this.setState({
+            activities: activities
+        });
+    },
+    usersUpdated: function(users){
+        this.setState({
+            users: users
+        });
     },
     workdaysUpdated: function(workdays){
         this.setState({
             workdays: workdays
-        });
-    },
-    activitiesUpdated: function(activities){
-        this.setState({
-            activities: activities
         });
     },
 
@@ -62,28 +68,20 @@ var App = React.createClass({
                 serverProperty: 'activities',
                 multiple: true,
                 data: this.state.activities
+            },
+            {
+                label: 'Users',
+                type: 'select',
+                serverProperty: 'users',
+                multiple: true,
+                data: this.state.users
             }
         ];
-
-        var months = {};
-        this.state.workdays.forEach(function(workday){
-            var workdayMonth = monthNames[new Date (workday.date).getMonth()];
-            months[workdayMonth] = (months[workdayMonth] || 0) + workday.hours;
-        });
-
-        var workdays = Object.keys(months).map(function(month){
-            return (
-                <li>{month}: {months[month]}</li>
-            );
-        });
-
-        //<ul>{workdays}</ul>
-
 
         return (
             <div id="pageContainer">
                 <Filter filters={filterProperties} onChange={this.onFilterChange}/>
-                <WorkdayViwer/>
+                <WorkdayViewer/>
             </div>
         )
     }
