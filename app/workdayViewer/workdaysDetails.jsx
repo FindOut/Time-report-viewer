@@ -7,9 +7,15 @@ module.exports = React.createClass({
             var activityWorkdays = _.filter(this.props.workdays, function(workday){
                 return workday.activity.id === activity.id;
             });
+            var activityHours = activityWorkdays.map(function(workday){
+                return workday.hours
+            }).reduce(function(total, currentValue){
+                return total + currentValue
+            });
+
             return (
                 <div>
-                    {activity.name}
+                    {activity.name}: {activityHours}
                 </div>
             )
         }, this);

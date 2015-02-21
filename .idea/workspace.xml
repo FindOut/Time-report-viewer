@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b719daca-1668-4ccd-b959-6c2636e2358c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/workdayViewer/workdaysSummary.jsx" afterPath="$PROJECT_DIR$/app/workdayViewer/workdaysSummary.jsx" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/filter/filter.scss" afterPath="$PROJECT_DIR$/app/filter/filter.scss" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/workdayViewer/workdaysDetails.jsx" afterPath="$PROJECT_DIR$/app/workdayViewer/workdaysDetails.jsx" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="report client.iws" />
@@ -75,12 +76,16 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="workdaysSummary.jsx" pinned="false" current-in-tab="true">
+      <file leaf-file-name="workdaysSummary.jsx" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/workdayViewer/workdaysSummary.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.38869864">
-              <caret line="34" column="9" selection-start-line="34" selection-start-column="9" selection-end-line="34" selection-end-column="9" />
-              <folding />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="38" column="26" selection-start-line="38" selection-start-column="26" selection-end-line="38" selection-end-column="26" />
+              <folding>
+                <marker date="1424561869068" expanded="true" signature="1276:1371" placeholder="&lt;xml/&gt;" />
+                <marker date="1424561869068" expanded="true" signature="1448:1608" placeholder="&lt;xml/&gt;" />
+                <marker date="1424561869068" expanded="true" signature="1532:1589" placeholder="&lt;xml/&gt;" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -90,16 +95,20 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
               <caret line="38" column="6" selection-start-line="38" selection-start-column="6" selection-end-line="38" selection-end-column="6" />
-              <folding />
+              <folding>
+                <marker date="1424559526448" expanded="true" signature="398:1749" placeholder="{...}" />
+                <marker date="1424559526448" expanded="true" signature="1396:1730" placeholder="&lt;xml/&gt;" />
+                <marker date="1424559526448" expanded="true" signature="1580:1711" placeholder="&lt;xml/&gt;" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="workdaysDetails.jsx" pinned="false" current-in-tab="false">
+      <file leaf-file-name="workdaysDetails.jsx" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/workdayViewer/workdaysDetails.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="30" />
+            <state vertical-scroll-proportion="0.08732877">
+              <caret line="3" column="23" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -142,8 +151,8 @@
       <file leaf-file-name="filter.scss" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/filter/filter.scss">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-2.6153846">
-              <caret line="4" column="11" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="11" />
+            <state vertical-scroll-proportion="-1.3076923">
+              <caret line="2" column="21" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -186,12 +195,12 @@
         <option value="$PROJECT_DIR$/app/index.jsx" />
         <option value="$PROJECT_DIR$/app/stores/WorkdayStore.jsx" />
         <option value="$PROJECT_DIR$/app/index.html" />
-        <option value="$PROJECT_DIR$/app/filter/filter.scss" />
         <option value="$PROJECT_DIR$/app/workdayViewer/workdayViewer.jsx" />
-        <option value="$PROJECT_DIR$/app/workdayViewer/workdaysDetails.jsx" />
         <option value="$PROJECT_DIR$/app/workdayViewer/usersInWorkdaysSelection.jsx" />
         <option value="$PROJECT_DIR$/app/index.scss" />
         <option value="$PROJECT_DIR$/app/workdayViewer/workdaysSummary.jsx" />
+        <option value="$PROJECT_DIR$/app/filter/filter.scss" />
+        <option value="$PROJECT_DIR$/app/workdayViewer/workdaysDetails.jsx" />
       </list>
     </option>
   </component>
@@ -670,7 +679,7 @@
       <workItem from="1424378954211" duration="9155000" />
       <workItem from="1424424715464" duration="640000" />
       <workItem from="1424426189231" duration="618000" />
-      <workItem from="1424463849434" duration="33954000" />
+      <workItem from="1424463849434" duration="34530000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1424471861936</created>
@@ -720,11 +729,17 @@
       <option name="project" value="LOCAL" />
       <updated>1424560973323</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="fixed month order">
+      <created>1424561889154</created>
+      <option name="number" value="00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1424561889154</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="143332000" />
+    <option name="totallyTimeSpent" value="143908000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="960" height="1040" extended-state="0" />
@@ -782,7 +797,8 @@
     <MESSAGE value="some refactoring" />
     <MESSAGE value="added basic workdaysDetails" />
     <MESSAGE value="added basic general styling" />
-    <option name="LAST_COMMIT_MESSAGE" value="added basic general styling" />
+    <MESSAGE value="fixed month order" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed month order" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1112,14 +1128,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/filter/filter.scss">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-2.6153846">
-          <caret line="4" column="11" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/workdayViewer/usersInWorkdaysSelection.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1132,19 +1140,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/workdayViewer/workdaysDetails.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/workdayViewer/workdayViewer.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="38" column="6" selection-start-line="38" selection-start-column="6" selection-end-line="38" selection-end-column="6" />
-          <folding />
+          <folding>
+            <marker date="1424559526448" expanded="true" signature="398:1749" placeholder="{...}" />
+            <marker date="1424559526448" expanded="true" signature="1396:1730" placeholder="&lt;xml/&gt;" />
+            <marker date="1424559526448" expanded="true" signature="1580:1711" placeholder="&lt;xml/&gt;" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1156,6 +1160,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/workdayViewer/workdaysSummary.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="38" column="26" selection-start-line="38" selection-start-column="26" selection-end-line="38" selection-end-column="26" />
+          <folding>
+            <marker date="1424561869068" expanded="true" signature="1276:1371" placeholder="&lt;xml/&gt;" />
+            <marker date="1424561869068" expanded="true" signature="1448:1608" placeholder="&lt;xml/&gt;" />
+            <marker date="1424561869068" expanded="true" signature="1532:1589" placeholder="&lt;xml/&gt;" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/index.scss">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-18.961538">
@@ -1164,10 +1180,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/workdayViewer/workdaysSummary.jsx">
+    <entry file="file://$PROJECT_DIR$/app/filter/filter.scss">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.38869864">
-          <caret line="34" column="9" selection-start-line="34" selection-start-column="9" selection-end-line="34" selection-end-column="9" />
+        <state vertical-scroll-proportion="-1.3076923">
+          <caret line="2" column="21" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/workdayViewer/workdaysDetails.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.08732877">
+          <caret line="3" column="23" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="23" />
           <folding />
         </state>
       </provider>
