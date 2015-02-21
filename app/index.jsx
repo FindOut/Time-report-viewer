@@ -7,8 +7,10 @@ var Reflux = require('reflux');
 require('../app/index.scss');
 
 var ActivityStore = require('../app/stores/ActivityStore');
-var Filter = require('../app/filter/Filter.jsx');
 var WorkdayStore = require('../app/stores/WorkdayStore');
+
+var Filter = require('../app/filter/Filter.jsx');
+var WorkdayViwer = require('../app/workdayViewer/workdayViewer');
 
 var monthNames = [ "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December" ];
@@ -75,10 +77,13 @@ var App = React.createClass({
             );
         });
 
+        //<ul>{workdays}</ul>
+
+
         return (
             <div>
                 <Filter filters={filterProperties} onChange={this.onFilterChange}/>
-                <ul>{workdays}</ul>
+                <WorkdayViwer/>
             </div>
         )
     }

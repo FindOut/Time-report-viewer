@@ -1,4 +1,5 @@
 var React = require('react');
+var _ = require('lodash');
 
 require('./filter.scss');
 module.exports = React.createClass({
@@ -6,12 +7,12 @@ module.exports = React.createClass({
 
     createSelectFilter: function(filterProperty){
         var renderedOptions = filterProperty.data.map(function(dataItem){
-            return <option value={dataItem.id}>{dataItem.name}</option>
+            return <option key={dataItem.id} value={dataItem.id}>{dataItem.name}</option>
         });
         var multiple = filterProperty.multiple ? 'multiple' : '';
 
         return (
-            <li>
+            <li key={filterProperty.serverProperty}>
                 <label>{filterProperty.label}: </label><br/>
                 <select multiple={filterProperty.multiple} ref={filterProperty.serverProperty}>
                         {renderedOptions}
@@ -22,7 +23,7 @@ module.exports = React.createClass({
     createDateFilter: function(filterProperty){
         this.datePickers.push("filter_" +filterProperty.serverProperty);
         return (
-            <li>
+            <li key={filterProperty.serverProperty}>
                 <label>{filterProperty.label}: </label><br/>
                 <input id={"filter_" + filterProperty.serverProperty} ref={filterProperty.serverProperty}/>
             </li>
