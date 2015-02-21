@@ -36,12 +36,15 @@ module.exports = React.createClass({
 
         //console.log(months);
 
-        var workdays = Object.keys(months).map(function(month){
-            return (
-                <li>{month.substr(0, 3)}<br/>
-                    {months[month]}
-                </li>
-            );
+        var workdays = [];
+        monthNames.forEach(function(month){
+            if(months[month] !== undefined){
+                workdays.push((
+                    <li>{month.substr(0, 3)}<br/>
+                        {months[month]}
+                    </li>
+                ));
+            }
         });
 
         return (
