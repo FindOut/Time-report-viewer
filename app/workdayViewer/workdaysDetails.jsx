@@ -2,7 +2,6 @@ var React = require('react');
 
 module.exports = React.createClass({
     render: function(){
-        //console.log(this.props.activities);
         var renderedActivities = this.props.activities.map(function(activity){
             var activityWorkdays = _.filter(this.props.workdays, function(workday){
                 return workday.activity.id === activity.id;
@@ -12,6 +11,7 @@ module.exports = React.createClass({
             }).reduce(function(total, currentValue){
                 return total + currentValue
             });
+            activityHours = Math.round(activityHours*100)/100;
 
             return (
                 <div>
@@ -19,8 +19,6 @@ module.exports = React.createClass({
                 </div>
             )
         }, this);
-
-        console.log(renderedActivities);
 
         return (
             <div id="workdaysDetails">

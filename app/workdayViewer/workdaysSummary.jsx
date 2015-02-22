@@ -31,6 +31,7 @@ module.exports = React.createClass({
             this.state.workdays.forEach(function(workday){
                 var workdayMonth = monthNames[new Date (workday.date).getMonth()];
                 months[workdayMonth] = (months[workdayMonth] || 0) + workday.hours;
+                months[workdayMonth] = Math.round(months[workdayMonth] *100)/100;
             });
         }
 
