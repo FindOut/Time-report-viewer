@@ -2,30 +2,25 @@ var React = require('react');
 var _ = require('lodash');
 
 require('./filter.scss');
+var Select = require('./parts/select');
 module.exports = React.createClass({
     datePickers: [],
 
     createSelectFilter: function(filterProperty){
-        var renderedOptions = filterProperty.data.map(function(dataItem){
-            return <option key={dataItem.id} value={dataItem.id}>{dataItem.name}</option>
-        });
-        var multiple = filterProperty.multiple ? 'multiple' : '';
-
         return (
-            <li key={filterProperty.serverProperty}>
-                <label>{filterProperty.label}: </label><br/>
-                <select multiple={filterProperty.multiple} ref={filterProperty.serverProperty}>
-                        {renderedOptions}
-                </select>
-            </li>
+            <Select ref={filterProperty.serverProperty} filterProperty={filterProperty} filterChange={this.filterChange}/>
         );
     },
+
     createDateFilter: function(filterProperty){
         this.datePickers.push("filter_" +filterProperty.serverProperty);
         return (
             <li key={filterProperty.serverProperty}>
                 <label>{filterProperty.label}: </label><br/>
-                <input id={"filter_" + filterProperty.serverProperty} ref={filterProperty.serverProperty}/>
+                <input
+                    id={"filter_" + filterProperty.serverProperty}
+                    ref={filterProperty.serverProperty}
+                    onChange={this.filterChange}/>
             </li>
         );
     },
@@ -33,7 +28,14 @@ module.exports = React.createClass({
         setTimeout(function(){
             var data = {};
             _.forEach(this.refs, function(filterData, filterName){
-                data[filterName] = filterData.state.value || filterData.getDOMNode().value;
+                var filterValue;
+                if(filterData.refs[filterName] !== undefined ){
+                    filterValue = filterData.refs[filterName].state.value;
+                } else {
+                    filterValue = filterData.getDOMNode().value;
+                }
+
+                data[filterName] = filterValue
             });
 
             this.props.onChange(data);
@@ -45,7 +47,6 @@ module.exports = React.createClass({
             $("#"+idForDatePicker).datepicker({onSelect: self.filterChange,  dateFormat: 'yy-mm-dd' });
         });
     },
-
 
     getInitialState: function(){
         return {filterData: {}};
@@ -66,7 +67,7 @@ module.exports = React.createClass({
         return (
             <div id="filter-container">
                 <h3>Filters</h3>
-                <form onChange={this.filterChange}>
+                <form>
                     <ul>
                         {renderedFilters}
                     </ul>
