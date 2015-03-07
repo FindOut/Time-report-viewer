@@ -1,0 +1,39 @@
+{
+    "name": "report",
+    "version": "0.0.0",
+    "description": "Timereports",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "node devserver.js",
+        "prod": "node prodserver.js"
+    },
+    "author": "",
+    "devDependencies": {
+        "css-loader": "^0.9.0",
+        "express": "^4.10.6",
+        "file-loader": "^0.8.1",
+        "json-loader": "^0.5.1",
+        "jsx-loader": "^0.12.2",
+        "jsxhint-loader": "^0.2.0",
+        "proxy-middleware": "^0.9.0",
+        "react-hot-loader": "^1.0.4",
+        "reflux": "^0.2.1",
+        "sass-loader": "^0.3.1",
+        "style-loader": "^0.8.2",
+        "url": "^0.10.1",
+        "url-loader": "^0.5.5",
+        "webpack": "^1.4.14",
+        "webpack-dev-server": "^1.7.0",
+        "yaml-loader": "^0.1.0"
+    },
+    "dependencies": {
+        "autoprefixer-loader": "^1.0.0",
+        "lodash": "^2.4.1",
+        "react": "^0.12.2",
+        "react-highlight": "^0.3.0",
+        "react-remarkable": "^1.1.0",
+        "react-router": "^0.11.6",
+        "underscore.string": "^2.4.0"
+    }
+}
