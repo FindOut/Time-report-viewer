@@ -8,7 +8,8 @@ module.exports = {
 
     output: {
         path: __dirname + '/app/',
-        filename: 'bundle.min.js'
+        //publicPath: 'http://localhost:3000/app/',
+        filename: 'bundle.js'
     },
 
     plugins: [
@@ -22,9 +23,11 @@ module.exports = {
 
     module: {
         loaders: [
-            { test: /\.css$/, loaders: ['style', 'css?minimize'] },
+            { test: /\.css$/, loaders: ['style', 'css'] },
+            { test: /\.scss$/, loaders: ['style', 'css', 'autoprefixer-loader?browsers=last 2 version', 'sass']},
             { test: /\.jsx$/, loaders: ['react-hot', 'jsx'] },
-            { test: /\.yaml$/, loaders: ['json', 'yaml'] }
+            { test: /\.yaml$/, loaders: ['json', 'yaml'] },
+            { test: /\.(ttf|eot|svg|woff).*$/, loaders: ['file']}
         ]
     }
 };
