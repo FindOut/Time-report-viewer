@@ -1,5 +1,6 @@
 var React = require('react');
 var _ = require('lodash');
+var FilterStore = require('./FilterStore');
 
 require('./filter.scss');
 var Select = require('./parts/select');
@@ -31,14 +32,14 @@ module.exports = React.createClass({
                 var filterValue;
                 if(filterData.refs[filterName] !== undefined ){
                     filterValue = filterData.refs[filterName].state.value;
+                    FilterStore.setFilteredValue(filterName, filterValue);
                 } else {
                     filterValue = filterData.getDOMNode().value;
+                    FilterStore.setFilteredValue(filterName, filterValue);
                 }
 
                 data[filterName] = filterValue
             });
-
-            this.props.onChange(data);
         }.bind(this), 1);
     },
     initDatePickers: function () {
@@ -55,7 +56,7 @@ module.exports = React.createClass({
         this.initDatePickers();
     },
     render: function(){
-        var renderedFilters = this.props.filters.map(function(filterProperty){
+        var renderedFilters = FilterStore.filterConfiguration.map(function(filterProperty){
             switch (filterProperty.type) {
                 case 'select':
                     return this.createSelectFilter(filterProperty);
@@ -63,6 +64,7 @@ module.exports = React.createClass({
                     return this.createDateFilter(filterProperty);
             }
         }.bind(this));
+//var renderedFilters = (<div></div>);
 
         return (
             <div id="filter-container">
