@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aa7856df-1f3c-4cd7-a933-8b50602353eb" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/frontend/app/filter/FilterStore.jsx" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/app/filter/Filter.jsx" afterPath="$PROJECT_DIR$/frontend/app/filter/Filter.jsx" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/app/index.jsx" afterPath="$PROJECT_DIR$/frontend/app/index.jsx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/frontend/app/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Time-report-viwer.iws" />
@@ -39,11 +37,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.jsx" pinned="false" current-in-tab="true">
+      <file leaf-file-name="index.jsx" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/frontend/app/index.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.1824687">
-              <caret line="45" column="0" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
+            <state vertical-scroll-proportion="-17.0">
+              <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/frontend/app/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.060714286">
+              <caret line="2" column="5" selection-start-line="2" selection-start-column="5" selection-end-line="2" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -79,6 +87,7 @@
         <option value="$PROJECT_DIR$/frontend/app/filter/FilterStore.jsx" />
         <option value="$PROJECT_DIR$/frontend/app/filter/Filter.jsx" />
         <option value="$PROJECT_DIR$/frontend/app/index.jsx" />
+        <option value="$PROJECT_DIR$/frontend/app/.gitignore" />
       </list>
     </option>
   </component>
@@ -528,7 +537,7 @@
       <updated>1425731966901</updated>
       <workItem from="1425731976515" duration="1401000" />
       <workItem from="1426155827817" duration="671000" />
-      <workItem from="1426189675349" duration="3715000" />
+      <workItem from="1426189675349" duration="3850000" />
     </task>
     <task id="LOCAL-00001" summary="improvement in filter structure">
       <created>1426193158571</created>
@@ -536,11 +545,17 @@
       <option name="project" value="LOCAL" />
       <updated>1426193158571</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="improvement in filter structure">
+      <created>1426193400700</created>
+      <option name="number" value="00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1426193400700</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="14975000" />
+    <option name="totallyTimeSpent" value="15110000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="960" height="1040" extended-state="0" />
@@ -790,8 +805,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/frontend/app/index.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.1824687">
-          <caret line="45" column="0" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
+        <state vertical-scroll-proportion="-17.0">
+          <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frontend/app/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.060714286">
+          <caret line="2" column="5" selection-start-line="2" selection-start-column="5" selection-end-line="2" selection-end-column="5" />
           <folding />
         </state>
       </provider>
