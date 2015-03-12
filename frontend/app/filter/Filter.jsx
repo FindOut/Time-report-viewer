@@ -7,6 +7,13 @@ var Select = require('./parts/select');
 module.exports = React.createClass({
     datePickers: [],
 
+    getInitialState: function() {
+        return {
+            filterConfiguration: [],
+            filterData: {}
+        };
+    },
+
     createSelectFilter: function(filterProperty){
         return (
             <Select ref={filterProperty.serverProperty} filterProperty={filterProperty} filterChange={this.filterChange}/>
@@ -27,6 +34,7 @@ module.exports = React.createClass({
     },
     filterChange: function(){
         setTimeout(function(){
+            console.log('filtering');
             var data = {};
             _.forEach(this.refs, function(filterData, filterName){
                 var filterValue;
@@ -49,22 +57,29 @@ module.exports = React.createClass({
         });
     },
 
-    getInitialState: function(){
-        return {filterData: {}};
-    },
     componentDidMount: function(){
+        FilterStore.listen(this.filterStoreUpdated);
+
         this.initDatePickers();
     },
+
+    filterStoreUpdated: function(){
+        this.setState({
+            filterConfiguration: FilterStore.filterConfiguration
+        })
+    },
+
     render: function(){
-        var renderedFilters = FilterStore.filterConfiguration.map(function(filterProperty){
+        var renderedFilters = this.state.filterConfiguration.map(function(filterProperty){
             switch (filterProperty.type) {
                 case 'select':
                     return this.createSelectFilter(filterProperty);
+                    break;
                 case 'date':
                     return this.createDateFilter(filterProperty);
+                    break;
             }
         }.bind(this));
-//var renderedFilters = (<div></div>);
 
         return (
             <div id="filter-container">

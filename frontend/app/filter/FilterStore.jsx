@@ -35,14 +35,11 @@ module.exports = Reflux.createStore({
         }.bind(this))
     },
 
-
-
     setFilteredValue: function(property, data){
         // Values needs to be stringified to handle arrays
         if(JSON.stringify(data) !== JSON.stringify(this.filteredValues[property])){
             this.filteredValues[property] = data;
 
-            console.log('saving');
             this.trigger(this.filteredValues);
         }
     },

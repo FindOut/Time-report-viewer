@@ -27,9 +27,12 @@ module.exports = React.createClass({
         var filterProperty = this.props.filterProperty,
             items = this.state.filterValue !== '' ? this.state.filteredItems : this.props.filterProperty.data;
 
-        var renderedOptions = items.map(function(dataItem){
-            return <option key={dataItem.id} value={dataItem.id}>{dataItem.name}</option>
-        });
+        var renderedOptions;
+        if(items !== undefined){
+            renderedOptions= items.map(function(dataItem){
+                return <option key={dataItem.id} value={dataItem.id}>{dataItem.name}</option>
+            });
+        }
 
         var filterSelect;
         if(filterProperty.multiple){
