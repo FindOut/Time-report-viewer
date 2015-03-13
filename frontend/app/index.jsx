@@ -13,7 +13,7 @@ var Filter = require('../app/filter/Filter.jsx');
 var WorkdayViewer = require('../app/workdayViewer/workdayViewer');
 
 var App = React.createClass({
-    componentDidMount: function(){
+    componentWillMount: function(){
         var filterProperties = [
             {
                 label: 'From',
