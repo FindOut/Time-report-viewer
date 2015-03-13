@@ -3,68 +3,84 @@ var _ = require('lodash');
 var FilterStore = require('./FilterStore');
 
 require('./filter.scss');
-var Select = require('./parts/select');
+var SelectFilter = require('./parts/SelectFilter');
+var DateFilter = require('./parts/DateFilter');
+
 module.exports = React.createClass({
-    datePickers: [],
+
+    getInitialState: function() {
+        return {
+            filterConfiguration: [],
+            filterData: {}
+        };
+    },
 
     createSelectFilter: function(filterProperty){
         return (
-            <Select ref={filterProperty.serverProperty} filterProperty={filterProperty} filterChange={this.filterChange}/>
+            <SelectFilter
+                ref={filterProperty.serverProperty}
+                filterProperty={filterProperty}
+                filterChange={this.filterChange}/>
         );
     },
 
     createDateFilter: function(filterProperty){
-        this.datePickers.push("filter_" +filterProperty.serverProperty);
         return (
-            <li key={filterProperty.serverProperty}>
-                <label>{filterProperty.label}: </label><br/>
-                <input
-                    id={"filter_" + filterProperty.serverProperty}
-                    ref={filterProperty.serverProperty}
-                    onChange={this.filterChange}/>
-            </li>
+            <DateFilter
+                ref={filterProperty.serverProperty}
+                filterProperty={filterProperty}
+                filterChange={this.filterChange}/>
         );
     },
     filterChange: function(){
         setTimeout(function(){
             var data = {};
+
             _.forEach(this.refs, function(filterData, filterName){
-                var filterValue;
-                if(filterData.refs[filterName] !== undefined ){
-                    filterValue = filterData.refs[filterName].state.value;
-                    FilterStore.setFilteredValue(filterName, filterValue);
+                var filter = filterData.refs[filterName],
+                    filterValue;
+
+                if(filter.state.value !== undefined ){
+                    filterValue = this.getSelectValue(filterName, filter);
                 } else {
-                    filterValue = filterData.getDOMNode().value;
-                    FilterStore.setFilteredValue(filterName, filterValue);
+                    filterValue = this.getInputValue(filterName, filter);
                 }
 
+                FilterStore.setFilteredValue(filterName, filterValue);
                 data[filterName] = filterValue
-            });
+            }.bind(this));
         }.bind(this), 1);
     },
-    initDatePickers: function () {
-        var self = this;
-        this.datePickers.forEach(function(idForDatePicker){
-            $("#"+idForDatePicker).datepicker({onSelect: self.filterChange,  dateFormat: 'yy-mm-dd' });
-        });
+
+    getSelectValue: function(filterName, filter){
+        return filter.state.value;
     },
 
-    getInitialState: function(){
-        return {filterData: {}};
+    getInputValue: function(filterName, filter){
+        return filter.getDOMNode().value;
     },
+
     componentDidMount: function(){
-        this.initDatePickers();
+        FilterStore.listen(this.filterStoreUpdated);
     },
+
+    filterStoreUpdated: function(){
+        this.setState({
+            filterConfiguration: FilterStore.filterConfiguration
+        })
+    },
+
     render: function(){
-        var renderedFilters = FilterStore.filterConfiguration.map(function(filterProperty){
+        var renderedFilters = this.state.filterConfiguration.map(function(filterProperty){
             switch (filterProperty.type) {
                 case 'select':
                     return this.createSelectFilter(filterProperty);
+                    break;
                 case 'date':
                     return this.createDateFilter(filterProperty);
+                    break;
             }
         }.bind(this));
-//var renderedFilters = (<div></div>);
 
         return (
             <div id="filter-container">

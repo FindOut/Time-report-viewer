@@ -13,7 +13,7 @@ var Filter = require('../app/filter/Filter.jsx');
 var WorkdayViewer = require('../app/workdayViewer/workdayViewer');
 
 var App = React.createClass({
-    componentDidMount: function(){
+    componentWillMount: function(){
         var filterProperties = [
             {
                 label: 'From',
@@ -39,19 +39,7 @@ var App = React.createClass({
         ];
 
         FilterStore.setFilterConfiguration(filterProperties);
-
-        WorkdayStore.listen(this.workdaysUpdated);
-        FilterStore.listen(this.onFilterChange);
-    },
-
-    workdaysUpdated: function(workdays){
-        this.setState({
-            workdays: workdays
-        });
-    },
-
-    onFilterChange: function(filterData){
-        WorkdayStore.fetchWorkdays(filterData);
+        FilterStore.listen(WorkdayStore.fetchWorkdays);
     },
 
     render : function(){
