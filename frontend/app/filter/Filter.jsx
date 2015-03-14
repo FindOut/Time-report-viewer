@@ -19,7 +19,7 @@ module.exports = React.createClass({
         return (
             <SelectFilter
                 ref={filterProperty.serverProperty}
-                filterProperty={filterProperty}
+                filterProperties={filterProperty}
                 filterChange={this.filterChange}/>
         );
     },
@@ -28,7 +28,7 @@ module.exports = React.createClass({
         return (
             <DateFilter
                 ref={filterProperty.serverProperty}
-                filterProperty={filterProperty}
+                filterProperties={filterProperty}
                 filterChange={this.filterChange}/>
         );
     },

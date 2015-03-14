@@ -2,50 +2,36 @@ var React = require('react');
 var _ = require('lodash');
 
 module.exports = React.createClass({
-    getInitialState: function(){
-        return {
-            filterValue: '',
-            filteredItems: [],
-            value: []
-        }
+    filterChange: function(event){
+        this.setState({
+            filteredItems: this.filterItems(event.target.value.toLowerCase())
+        });
     },
 
-    filterItems: function(event){
-        var filterInputValue = event.target.value,
-            filteredItems = _.filter(this.props.filterProperty.data, function (item) {
-                var itemName = item.name.toLowerCase();
-                return itemName.indexOf(filterInputValue.toLowerCase()) > -1;
-            });
+    getItems: function(){
+        var items = this.state === null ?  this.props.filterProperties.data : this.state.filteredItems;
+        return items || [];
+    },
 
-        this.setState({
-            filterValue: filterInputValue,
-            filteredItems: filteredItems
+    filterItems: function(filterValue){
+        return _.filter(this.props.filterProperties.data, function (item) {
+            return item.name.toLowerCase().indexOf(filterValue) > -1;
         });
     },
 
     render: function(){
-        var filterProperty = this.props.filterProperty,
-            items = this.state.filterValue !== '' ? this.state.filteredItems : this.props.filterProperty.data;
-
-        var renderedOptions;
-        if(items !== undefined){
-            renderedOptions= items.map(function(dataItem){
+        var filterProperties = this.props.filterProperties,
+            renderedOptions = this.getItems().map(function(dataItem){
                 return <option key={dataItem.id} value={dataItem.id}>{dataItem.name}</option>
             });
-        }
 
-        var filterSelect;
-        if(filterProperty.multiple){
-            var placeholder = "Filter " + filterProperty.label;
-            filterSelect = (<input onChange={this.filterItems} placeholder={placeholder}/>)
-        }
         return (
-            <li key={filterProperty.serverProperty}>
-                <label>{filterProperty.label}: </label><br/>
-                {filterSelect}
+            <li key={filterProperties.serverProperty}>
+                <label>{filterProperties.label}: </label><br/>
+                <input onChange={this.filterChange} placeholder={"Filter " + filterProperties.label}/>
                 <select
-                    multiple={filterProperty.multiple}
-                    ref={filterProperty.serverProperty}
+                    multiple={filterProperties.multiple}
+                    ref={filterProperties.serverProperty}
                     onChange={this.props.filterChange}>
                     {renderedOptions}
                 </select>
