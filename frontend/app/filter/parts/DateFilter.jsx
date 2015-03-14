@@ -2,7 +2,7 @@ var React = require('react');
 
 module.exports = React.createClass({
     render: function(){
-        var filterID = "filter_" + this.props.filterProperty.serverProperty;
+        var filterID = "filter_" + this.props.filterProperties.serverProperty;
 
         if($("#" + filterID + ".hasDatepicker").length === 0){
             $("#"+filterID).datepicker(
@@ -14,11 +14,11 @@ module.exports = React.createClass({
         }
 
         return (
-            <li key={this.props.filterProperty.serverProperty}>
-                <label>{this.props.filterProperty.label}: </label><br/>
+            <li key={this.props.filterProperties.serverProperty}>
+                <label>{this.props.filterProperties.label}: </label><br/>
                 <input
                     id={filterID}
-                    ref={this.props.filterProperty.serverProperty}/>
+                    ref={this.props.filterProperties.serverProperty}/>
             </li>
         );
     }
