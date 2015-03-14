@@ -1,3 +1,7 @@
+html, body, #pageContainer {
+  height: 100%;
+}
+
 body {
   margin: 0;
 }
@@ -5,14 +9,14 @@ body {
 #workdayViewer {
   //filter width
   margin-right: 250px;
-}
-//#workdayViewer:after {
-//  content: ' ';
-//  display: table;
-//  clear: both;
-//}
+  height: 100%;
 
-#workdayDetails {display: block;
+  overflow: auto;
+}
+
+#workdayDetails {
+  display: block;
+
 }
 
 #workdaysSummary {
