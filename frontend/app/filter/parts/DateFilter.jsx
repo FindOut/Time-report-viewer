@@ -15,10 +15,10 @@ module.exports = React.createClass({
 
         return (
             <li key={this.props.filterProperties.serverProperty}>
-                <label>{this.props.filterProperties.label}: </label><br/>
                 <input
                     id={filterID}
-                    ref={this.props.filterProperties.serverProperty}/>
+                    ref={this.props.filterProperties.serverProperty}
+                    placeholder={"Filter " + this.props.filterProperties.label}/>
             </li>
         );
     }

@@ -27,8 +27,7 @@ module.exports = React.createClass({
 
         return (
             <li key={filterProperties.serverProperty}>
-                <label>{filterProperties.label}: </label><br/>
-                <input onChange={this.filterChange} placeholder={"Filter " + filterProperties.label}/>
+                <input className="selectFilter" onChange={this.filterChange} placeholder={"Filter " + filterProperties.label}/>
                 <select
                     multiple={filterProperties.multiple}
                     ref={filterProperties.serverProperty}
