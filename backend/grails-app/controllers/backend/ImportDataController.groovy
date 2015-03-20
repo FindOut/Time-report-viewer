@@ -2,32 +2,18 @@ package backend
 
 class ImportDataController {
 
-    def dropboxService
     def excelFileParserService
+    def importDataService
 
     def importDataFromDropbox() {
-        String timeReportsPath = "/FindOut- Linje/Tidrapporter/2014 - Tidrapporter"
-
-        List files = dropboxService.downloadFiles(timeReportsPath)
-
-        files.each{ File file ->
-            if(file){
-                excelFileParserService.parseFile(file)
-                file.delete() // This does not seem to work
-            }
-        }
+        importDataService.importDataFromDropbox()
     }
 
     def importData() {
-        def file = params.file
-        def webRootDir = servletContext.getRealPath("/")
+        File file = new File(params.file.originalFilename as String)
+        params.file.transferTo(file)
 
-        File userDir = new File(webRootDir)
-        userDir.mkdirs()
-        File localFile = new File(userDir, file.originalFilename as String)
-        file.transferTo(localFile)
-
-        excelFileParserService.parseFile(localFile)
+        excelFileParserService.parseFile(file)
 
         render text: 'test'
     }

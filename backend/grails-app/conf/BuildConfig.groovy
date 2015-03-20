@@ -63,6 +63,7 @@ grails.project.dependency.resolution = {
         compile ":asset-pipeline:1.8.11"
         compile ":joda-time:1.5"
         compile ":excel-import:1.0.1"
+        compile ":quartz:1.0.2"
         // plugins needed at runtime but not for compilation
         runtime ":hibernate4:4.3.5.4" // or ":hibernate:3.6.10.16"
         runtime ":database-migration:1.4.0"
