@@ -19,7 +19,7 @@ class ExcelFileParserService {
     List IGNORED_ACTIVITIES = [
             'Debiterbar tid per EO',
             'Investerad tid i EO ',
-            '<fyll i aktivitet 1 här>',
+            '<fyll i aktivitet 1 hï¿½r>',
             '< osv.. >',
             'Annan FindOut tid ',
             '. . .',
@@ -27,15 +27,11 @@ class ExcelFileParserService {
             'Totalsumma',
             'Kompledighet',
             'Summa normaltid',
-            'Endast om särskild ersättning avtalats för övertid / obekväm arbetstid! Var noggrann och ange tidpunkt om det rör kvälls- eller helgarbete.'
+            'Endast om sï¿½rskild ersï¿½ttning avtalats fï¿½r ï¿½vertid / obekvï¿½m arbetstid! Var noggrann och ange tidpunkt om det rï¿½r kvï¿½lls- eller helgarbete.'
     ]
 
     def parseFile(File file) {
-//        File file = new File(fileName)
-
-
         Workbook excelFile = WorkbookFactory.create(file)
-        int nrOfSheets = excelFile.numberOfSheets
 
         // Get workbook user
         String name = getUserName(excelFile)

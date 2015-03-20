@@ -33,7 +33,7 @@
         </script>
 	<body>
     <div>
-        <g:link controller="importData" action="importDropboxFiles"><h2>Import from Dropbox</h2></g:link>
+        <g:link controller="importData" action="importDataFromDropbox"><h2>Import from Dropbox</h2></g:link>
 
         <g:link class="addFile" controller="importData" action="importData">Load Excel file</g:link>
         <input id="triggerFileBrowse" style="display: none"/>%{--workaround for triggering plupload filebrowse--}%
