@@ -1,6 +1,6 @@
-var AppConfig = require('../AppConfig'),
-    Reflux = require('reflux'),
-    _ = require('lodash');
+var AppConfig = require('../AppConfig');
+var Reflux = require('reflux');
+var _ = require('lodash');
 
 module.exports = Reflux.createStore({
     workdays: [],
@@ -43,6 +43,7 @@ module.exports = Reflux.createStore({
             data: filterData
         }).then(function(data){
             this.workdays = data;
+            console.log(data);
             this.setMetaProperties();
             this.trigger(this.workdays);
         }.bind(this));
