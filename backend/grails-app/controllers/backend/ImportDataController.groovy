@@ -1,8 +1,5 @@
 package backend
 
-import backend.Activity
-import backend.User
-import backend.Workday
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
@@ -11,26 +8,48 @@ import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.joda.time.DateTime
 
 class ImportDataController {
-    int STRING_TYPE = 1
-    int MONTHS_IN_YEAR = 12
-    int INDEX_ACTIVITY_NAME = 1
-    int INDEX_ACTIVITY_DATA_START = 3
-    Map USER_NAME_CELL = [row: 1,column: 10]
-    Map DATE_CELL = [row: 2,column: 1]
-    List IGNORED_ACTIVITIES = [
-            'Debiterbar tid per EO',
-            'Investerad tid i EO ',
-            '<fyll i aktivitet 1 här>',
-            '< osv.. >',
-            'Annan FindOut tid ',
-            '. . .',
-            'Annan tid',
-            'Totalsumma',
-            'Kompledighet',
-            'Summa normaltid',
-            'Endast om särskild ersättning avtalats för övertid / obekväm arbetstid! Var noggrann och ange tidpunkt om det rör kvälls- eller helgarbete.'
-    ]
 
+
+    String accessToken = 'ZFMLm8JBu2kAAAAAAAAUHpJGwM9dNMSkoDxE92O-2aAW1-zY37Rzmy0NlOfjCmDp'
+    def dropboxService
+    def excelFileParserService
+
+    def importDropboxFiles() {
+        String timeReportsPath = "/FindOut- Linje/Tidrapporter/2014 - Tidrapporter"
+
+        List files = dropboxService.downloadFiles(timeReportsPath)
+
+        files.each{ File file ->
+
+            if(file){
+                println 'parsing file: ' + file.getName()
+                excelFileParserService.parseFile(file)
+            }
+        }
+        println files
+//        files.each{
+//            if (it.isFile()){
+//                DbxEntry.File dbxEntryFile = it as DbxEntry.File
+//                String fileName = dbxEntryFile.path.replaceAll("(?i)"+timeReportsPath + '/', '')
+//                FileOutputStream outputStream = new FileOutputStream(fileName);
+//
+//                outputStream.close()
+//
+//                excelService.parseFile(fileName)
+//                try {
+//                    if (file.exists()) {
+////                        file.delete() // why this no work!?!
+//                    }
+//                }
+//                catch(IOException e) {
+//                    System.out.print("Error occured!"+ e);
+//                }
+//            }
+////            FileInputStream excelFileStream = new FileInputStream(downloadedFile)
+////            Workbook excelFile = WorkbookFactory.create(excelFileStream)
+////            int nrOfSheets = excelFile.numberOfSheets
+//        }
+    }
 
     def importData() {
         def file = params.file
@@ -38,7 +57,7 @@ class ImportDataController {
 
         File userDir = new File(webRootDir)
         userDir.mkdirs()
-        File localFile = new File( userDir,file.originalFilename as String)
+        File localFile = new File(userDir, file.originalFilename as String)
         file.transferTo(localFile)
         FileInputStream excelFileStream = new FileInputStream(localFile)
 
@@ -47,12 +66,12 @@ class ImportDataController {
 
         // Get workbook user
         String name = getUserName(excelFile)
-        if (!name){
+        if (!name) {
             name = localFile.getName().split(' - ')[0].trim()
         }
         User user = User.findOrSaveWhere(name: name)
 
-        (1..MONTHS_IN_YEAR).each{ int sheetIndex ->
+        (1..MONTHS_IN_YEAR).each { int sheetIndex ->
             Boolean checkActivity = false
 
             Sheet sheet = excelFile.getSheetAt(sheetIndex)
@@ -69,13 +88,13 @@ class ImportDataController {
             Iterator<Row> rows = sheet.rowIterator()
             rows.eachWithIndex { Row row, int rowIndex ->
                 String activityName = getActivityName(row)
-                if (activityName){
+                if (activityName) {
                     // Remove trailing whitespaces
                     activityName = activityName.trim()
                     // Currently iterating over activities?
                     checkActivity = iteratingOverActivityRows(activityName) ?: checkActivity
 
-                    if (checkActivity && !IGNORED_ACTIVITIES.contains(activityName)){
+                    if (checkActivity && !IGNORED_ACTIVITIES.contains(activityName)) {
                         // Get activity
                         Activity activity = findOrCreateActivity(activityName)
 
@@ -83,13 +102,13 @@ class ImportDataController {
                         activityDataRange.eachWithIndex { int columnIndex, int index ->
                             Date date = sheetDate.plusDays(index).toDate()
                             double hours = 0
-                            if(row.getCell(columnIndex) && row.getCell(columnIndex).getCellType() == 0){
+                            if (row.getCell(columnIndex) && row.getCell(columnIndex).getCellType() == 0) {
                                 // Get hours value and round to 2 decimals
                                 hours = row.getCell(columnIndex)?.numericCellValue
                                 hours = hours.round(2)
                             }
 
-                            if(hours > 0){
+                            if (hours > 0) {
                                 createAndSaveWorkday(user, activity, date, hours)
                             }
                         }
@@ -99,67 +118,5 @@ class ImportDataController {
         }
         println Workday.count()
         render text: 'test'
-    }
-
-    private String getActivityName(Row row){
-        if (row.getCell(1) && row.getCell(1).getCellType() == STRING_TYPE) {
-            return row.getCell(INDEX_ACTIVITY_NAME).getStringCellValue()
-        }
-        return null
-    }
-
-    private static Activity findOrCreateActivity(String activityName){
-        if(activityName){
-            Activity activity = Activity.findByName(activityName)
-            if(!activity?.id){
-                activity = new Activity(name: activityName)
-                activity.save(flush: true)
-
-            }
-            return activity
-        }
-        return null
-    }
-
-    private static void createAndSaveWorkday(user, activity, date, hours){
-        Workday workday = Workday.findOrCreateWhere(
-                user: user,
-                date: date,
-                activity: activity
-        )
-
-        workday.hours = hours
-        workday.save()
-    }
-
-    private static Range getActivityDataRange(indexStart, daysInMonth){
-        (indexStart..indexStart+daysInMonth-1)
-    }
-
-    private static int getDaysInMonth(DateTime date){
-        date.dayOfMonth().getMaximumValue()
-    }
-
-    private String getUserName(Workbook excelFile){
-        String name
-        (1..MONTHS_IN_YEAR).each{ int sheetIndex ->
-            Sheet sheet = excelFile.getSheetAt(sheetIndex)
-            name = name?: getCell(sheet, USER_NAME_CELL).stringCellValue
-        }
-
-        name
-    }
-    private static Cell getCell(Sheet sheet, map ){
-        sheet.getRow(map.row).getCell(map.column)
-    }
-
-    private static Boolean iteratingOverActivityRows(String activityCell) {
-        Boolean checkActivity = false
-        if (activityCell == "Debiterbar tid per EO"){
-            checkActivity = true
-        } else if (activityCell.toLowerCase() == 'summa normaltid' ){
-            checkActivity = false
-        }
-        checkActivity
     }
 }
