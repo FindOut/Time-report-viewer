@@ -1,5 +1,6 @@
-var Reflux = require('reflux');
-var _ = require('lodash');
+var AppConfig = require('../AppConfig'),
+    Reflux = require('reflux'),
+    _ = require('lodash');
 
 module.exports = Reflux.createStore({
     activities: [],
@@ -12,7 +13,7 @@ module.exports = Reflux.createStore({
     },
     fetchActivityData: function () {
         $.ajax({
-            url: 'http://ceras.se/report/activities.json?max=-1',
+            url: AppConfig.serverURL + '/activities.json?max=-1',
             crossDomain: true
         }).then(function (activities) {
             this.activities = _.sortBy(activities, function(activity){ // sort activities by name
