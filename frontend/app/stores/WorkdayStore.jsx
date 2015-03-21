@@ -43,7 +43,6 @@ module.exports = Reflux.createStore({
             data: filterData
         }).then(function(data){
             this.workdays = data;
-            console.log(data);
             this.setMetaProperties();
             this.trigger(this.workdays);
         }.bind(this));
