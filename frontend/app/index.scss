@@ -8,15 +8,21 @@ body {
 
 #workdayViewer {
   //filter width
+  margin-left: 5px;
   margin-right: 250px;
-  height: 100%;
 
-  overflow: auto;
+  #upper {
+    height: 200px;
+
+    overflow: hidden;
+  }
+  #lower {
+
+  }
 }
 
 #workdayDetails {
   display: block;
-
 }
 
 #workdaysSummary {
@@ -40,8 +46,34 @@ body {
   }
 }
 
+#workdaysDetails {
+  float:left;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+#activitiesInSelection {
+  float:right;
+  height: 100%;
+
+  overflow-y: scroll;
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      margin: 0 10px 0 0;
+    }
+  }
+}
+
 #usersInSelection {
   float:right;
+  height: 100%;
+
+  overflow-y: scroll;
   ul {
     list-style: none;
     padding: 0;

@@ -1,6 +1,6 @@
-var AppConfig = require('../AppConfig'),
-    Reflux = require('reflux'),
-    _ = require('lodash');
+var AppConfig = require('../AppConfig');
+var Reflux = require('reflux');
+var _ = require('lodash');
 
 module.exports = Reflux.createStore({
     workdays: [],

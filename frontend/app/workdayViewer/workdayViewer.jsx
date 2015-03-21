@@ -4,8 +4,10 @@ var React = require('react'),
     UserStore = require('../stores/UserStore'),
     WorkdaysDetails = require('./workdaysDetails'),
     WorkdaysSummary = require('./workdaysSummary'),
-    UsersInWorkdaysSelection =require('./usersInWorkdaysSelection');
-
+    UsersInWorkdaysSelection = require('./usersInWorkdaysSelection'),
+    ActivitiesInWorkdaySelection = require('./activitiesInWorkdaySelection'),
+    WorkdaySelectionMetaData = require('./workdaySelectionMetaData'),
+    WorkdaySelectionDetails = require('./workdaySelectionDetails');
 
 module.exports = React.createClass({
     getInitialState: function(){
@@ -38,14 +40,22 @@ module.exports = React.createClass({
         WorkdayStore.listen(this.workdaysUpdated);
     },
 
+//<WorkdaysSummary workdays={this.state.workdays} />
+//<UsersInWorkdaysSelection users={this.state.currentUsers}/>
+//<WorkdaysDetails
+//    workdays={this.state.workdays}
+//    activities={this.state.currentActivities}/>
     render: function(){
         return (
             <div id="workdayViewer">
-                <WorkdaysSummary workdays={this.state.workdays} />
-                <UsersInWorkdaysSelection users={this.state.currentUsers}/>
-                <WorkdaysDetails
-                    workdays={this.state.workdays}
-                    activities={this.state.currentActivities}/>
+                <div id="upper">
+                    <WorkdaySelectionMetaData workdays={this.state.workdays} />
+                    <UsersInWorkdaysSelection users={this.state.currentUsers}/>
+                    <ActivitiesInWorkdaySelection activities={this.state.currentActivities}/>
+                </div>
+                <div id="lower">
+                    <WorkdaySelectionDetails workdays={this.state.workdays} />
+                </div>
             </div>
         );
     }
