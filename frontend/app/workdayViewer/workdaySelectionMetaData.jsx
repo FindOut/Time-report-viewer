@@ -19,7 +19,7 @@ module.exports = React.createClass({
         var totalHoursInSelection = this.getTotalHoursInSelection();
         return (
             <div id="workdaysDetails">
-                <h3>Total Hours</h3>
+                <h4>Total Hours</h4>
                 {totalHoursInSelection}
             </div>
         )

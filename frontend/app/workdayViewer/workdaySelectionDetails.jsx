@@ -111,7 +111,9 @@ module.exports = React.createClass({
 
         var config = {
             chart: {
-                type: 'column'
+                type: 'column',
+                backgroundColor:'transparent',
+                spacingLeft: 0
             },
             title: {
                 text: 'Time in selection',
@@ -128,11 +130,7 @@ module.exports = React.createClass({
                 title: {
                     text: 'Hours'
                 },
-                plotLines: [{
-                    value: 0,
-                    width: 1,
-                    color: '#808080'
-                }]
+                gridLineColor: '#CCCCCC'
             },
             tooltip: {
                 pointFormat: '{point.x:%e. %b}: {point.y:.2f}h'

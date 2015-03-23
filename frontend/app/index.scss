@@ -8,20 +8,25 @@ body {
 
 #workdayViewer {
   //filter width
-  margin-left: 5px;
   margin-right: 250px;
 
   #upper {
+    overflow: hidden;
     height: 200px;
 
-    overflow: hidden;
+    white-space: nowrap;
+
+    border-bottom: 1px solid darkslategrey;
   }
   #lower {
-
+    overflow: hidden;
+    margin-right: 1px;
   }
 }
 
-#workdayDetails {
+#workdaysDetails {
+  text-align: center;
+
   display: block;
 }
 
@@ -47,18 +52,29 @@ body {
 }
 
 #workdaysDetails {
-  float:left;
+  display: inline-block;
+  width: 15%;
+  padding-top: 5px;
+  text-align: center;
+  vertical-align: top;
 
-  h3 {
+  h4 {
     margin: 0;
   }
 }
 
 #activitiesInSelection {
-  float:right;
+  display: inline-block;
   height: 100%;
+  width: 59.5%;
+  overflow-y: auto;
 
-  overflow-y: scroll;
+  border-left: 1px solid darkslategrey;
+  text-align: center;
+
+  h4 {
+    margin: 5px;
+  }
   ul {
     list-style: none;
     padding: 0;
@@ -70,10 +86,17 @@ body {
 }
 
 #usersInSelection {
-  float:right;
+  display: inline-block;
   height: 100%;
+  width: 25%;
+  overflow-y: auto;
 
-  overflow-y: scroll;
+  border-left: 1px solid darkslategrey;
+  text-align: center;
+
+  h4 {
+    margin: 5px;
+  }
   ul {
     list-style: none;
     padding: 0;

@@ -50,8 +50,8 @@ module.exports = React.createClass({
             <div id="workdayViewer">
                 <div id="upper">
                     <WorkdaySelectionMetaData workdays={this.state.workdays} />
-                    <UsersInWorkdaysSelection users={this.state.currentUsers}/>
                     <ActivitiesInWorkdaySelection activities={this.state.currentActivities}/>
+                    <UsersInWorkdaysSelection users={this.state.currentUsers}/>
                 </div>
                 <div id="lower">
                     <WorkdaySelectionDetails workdays={this.state.workdays} />
