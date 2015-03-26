@@ -3,6 +3,9 @@
 *.xls
 *.iml
 *.iws
+*.war
+*.log
+*.tmp
 .classpath
 .settings
 stacktrace.log
@@ -11,13 +14,15 @@ stacktrace.log
 /*.log
 /*DB.*
 /cobertura.ser
-/target/
+
 /out/
 /web-app/plugins
 target-eclipse/
 target/
+target/*
 ROOT.war
 .project
 /web-app/WEB-INF/*
 errorStatus.txt
 errorReqs.txt
+backend-config.groovy

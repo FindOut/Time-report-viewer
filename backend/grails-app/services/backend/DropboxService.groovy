@@ -3,20 +3,24 @@ package backend
 import com.dropbox.core.DbxClient
 import com.dropbox.core.DbxRequestConfig
 import grails.transaction.Transactional
+import grails.util.Holders
 
 @Transactional
 class DropboxService {
-    private String accessToken = 'ZFMLm8JBu2kAAAAAAAAUHpJGwM9dNMSkoDxE92O-2aAW1-zY37Rzmy0NlOfjCmDp'
+
+    private def accessToken = Holders.config.grail.config.dropbox.token
+//            'ZFMLm8JBu2kAAAAAAAAUHpJGwM9dNMSkoDxE92O-2aAW1-zY37Rzmy0NlOfjCmDp'
 
     List<File> downloadFiles(String timeReportsPath) {
-        List fileEntries = getEntriesFromDropboxFolderPath(timeReportsPath)
-
-        fileEntries.collect{ fileEntry ->
-            String fileName = fileEntry.path.replaceAll("(?i)" + timeReportsPath + "/", '')
-            if(isTimeReportFile(fileName)){
-                downloadFile(fileEntry, fileName)
-            }
-        }
+        println accessToken
+//        List fileEntries = getEntriesFromDropboxFolderPath(timeReportsPath)
+//
+//        fileEntries.collect{ fileEntry ->
+//            String fileName = fileEntry.path.replaceAll("(?i)" + timeReportsPath + "/", '')
+//            if(isTimeReportFile(fileName)){
+//                downloadFile(fileEntry, fileName)
+//            }
+//        }
     }
 
     File downloadFile(fileEntry, String fileName) {
