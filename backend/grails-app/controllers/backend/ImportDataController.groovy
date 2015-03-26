@@ -3,6 +3,7 @@ package backend
 class ImportDataController {
 
     def excelFileParserService
+    def fileService
     def importDataService
 
     def importDataFromDropbox() {
@@ -10,9 +11,7 @@ class ImportDataController {
     }
 
     def importData() {
-        File file = new File(params.file.originalFilename as String)
-        params.file.transferTo(file)
-
+        File file = fileService.createFileFromParams(params.file, servletContext.getRealPath("/"))
         excelFileParserService.parseFile(file)
 
         render text: 'test'
