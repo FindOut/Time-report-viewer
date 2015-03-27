@@ -1,7 +1,7 @@
 // locations to search for config files that get merged into the main config;
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
-grail.config.dropbox.token = 'test'
+
 grails.config.locations = ["classpath:${appName}-config.groovy",
                            "file:./${appName}-config.groovy"]
 //if (System.properties["${appName}.config"]) {

@@ -8,19 +8,18 @@ import grails.util.Holders
 @Transactional
 class DropboxService {
 
-    private def accessToken = Holders.config.grail.config.dropbox.token
-//            'ZFMLm8JBu2kAAAAAAAAUHpJGwM9dNMSkoDxE92O-2aAW1-zY37Rzmy0NlOfjCmDp'
+    private String accessToken = Holders.config.grail.config.dropbox.token
 
     List<File> downloadFiles(String timeReportsPath) {
         println accessToken
-//        List fileEntries = getEntriesFromDropboxFolderPath(timeReportsPath)
-//
-//        fileEntries.collect{ fileEntry ->
-//            String fileName = fileEntry.path.replaceAll("(?i)" + timeReportsPath + "/", '')
-//            if(isTimeReportFile(fileName)){
-//                downloadFile(fileEntry, fileName)
-//            }
-//        }
+        List fileEntries = getEntriesFromDropboxFolderPath(timeReportsPath)
+
+        fileEntries.collect{ fileEntry ->
+            String fileName = fileEntry.path.replaceAll("(?i)" + timeReportsPath + "/", '')
+            if(isTimeReportFile(fileName)){
+                downloadFile(fileEntry, fileName)
+            }
+        }
     }
 
     File downloadFile(fileEntry, String fileName) {

@@ -6,7 +6,7 @@ class ImportTimeReportsFromDropboxJob {
     }
 
     def execute() {
-        def dropboxService = new DropboxService()
-        dropboxService.importDataFromDropbox()
+        def importDataService = new ImportDataService()
+        importDataService.importDataFromDropbox()
     }
 }

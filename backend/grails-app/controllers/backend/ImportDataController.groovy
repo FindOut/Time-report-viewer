@@ -8,6 +8,8 @@ class ImportDataController {
 
     def importDataFromDropbox() {
         importDataService.importDataFromDropbox()
+
+        render status:200
     }
 
     def importData() {
