@@ -5,8 +5,8 @@ class ImportTimeReportsFromDropboxJob {
         cron name: 'importData', cronExpression: "0 0 4 * * ?"
     }
 
+    def importDataService
     def execute() {
-        def importDataService = new ImportDataService()
         importDataService.importDataFromDropbox()
     }
 }
