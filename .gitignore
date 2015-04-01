@@ -19,6 +19,7 @@ stacktrace.log
 /web-app/plugins
 target-eclipse/
 target/
+temp/
 target/*
 ROOT.war
 .project

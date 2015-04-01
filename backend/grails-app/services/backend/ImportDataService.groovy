@@ -2,23 +2,20 @@
 package backend
 
 import grails.transaction.Transactional
+import grails.util.Holders
+
+import java.util.zip.ZipFile
 
 @Transactional
 class ImportDataService {
 
     def excelFileParserService
-    def dropboxService
+    def fileService
 
     def importDataFromDropbox() {
-        String timeReportsPath = "/FindOut- Linje/Tidrapporter/2014 - Tidrapporter"
+        String url = Holders.config.dropbox.time_report.folder.url
+        ZipFile zipFile = fileService.downloadZipFromUrl(url)
 
-        List files = dropboxService.downloadFiles(timeReportsPath)
-
-        files.each{ File file ->
-            if(file){
-                excelFileParserService.parseFile(file)
-                file.delete() // This does not seem to work
-            }
-        }
+        excelFileParserService.parseFilesInZip(zipFile)
     }
 }
