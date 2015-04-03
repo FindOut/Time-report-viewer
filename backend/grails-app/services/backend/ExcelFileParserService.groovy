@@ -8,6 +8,9 @@ import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.joda.time.DateTime
 
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+
 @Transactional
 class ExcelFileParserService {
     int STRING_TYPE = 1
@@ -33,58 +36,102 @@ class ExcelFileParserService {
     def parseFile(File file) {
         Workbook excelFile = WorkbookFactory.create(file)
 
+        parseWorkbook(excelFile, file.getName())
+    }
+
+    def parseInputStream(InputStream stream, String fileName) {
+        try {
+            Workbook excelFile = WorkbookFactory.create(stream)
+            parseWorkbook(excelFile, fileName)
+        } catch (e) {
+            println 'broken file: ' + fileName
+            println e
+        }
+    }
+
+    def parseFilesInZip(ZipFile zipFile){
+        zipFile.entries().each { ZipEntry entry ->
+            if(isTimeReport(entry.name)){
+                String fileName = entry.name.split('/')[-1]
+                parseInputStream(zipFile.getInputStream(entry), fileName)
+            }
+        }
+        zipFile.close()
+    }
+
+    private static Boolean isTimeReport(fileName){
+        Boolean isTimeReport = true
+
+        isTimeReport = isTimeReport && fileName.contains(' - Tidrapporter')
+        isTimeReport = isTimeReport && fileName.contains('.xls')
+
+        isTimeReport = isTimeReport && !fileName.contains('MACOSX')
+        isTimeReport = isTimeReport && !fileName.contains('konfliktkopia')
+        isTimeReport = isTimeReport && !fileName.contains('conflicted copy')
+        isTimeReport = isTimeReport && !fileName.contains('Justering')
+
+        return isTimeReport
+    }
+
+    private void parseWorkbook(Workbook excelFile, String fileName){
         // Get workbook user
         String name = getUserName(excelFile)
         if (!name){
-            name = file.getName().split(' - ')[0].trim()
+            name = fileName.split(' - ')[0].trim()
         }
-        User user = User.findOrSaveWhere(name: name)
+        println 'parsing file: ' + fileName
+        if(name){
+            User user = User.findOrSaveWhere(name: name)
 
-        (1..MONTHS_IN_YEAR).each{ int sheetIndex ->
-            Boolean checkActivity = false
+            (1..MONTHS_IN_YEAR).each{ int sheetIndex ->
+                Boolean checkActivity = false
 
-            Sheet sheet = excelFile.getSheetAt(sheetIndex)
+                Sheet sheet = excelFile.getSheetAt(sheetIndex)
 
-            // Get date on sheet
-            DateTime sheetDate = new DateTime(getCell(sheet, DATE_CELL).dateCellValue)
+                // Get date on sheet
+                DateTime sheetDate = new DateTime(getCell(sheet, DATE_CELL).dateCellValue)
 
-            // Get days in month
-            int daysInMonth = getDaysInMonth(sheetDate)
+                // Get days in month
+                int daysInMonth = getDaysInMonth(sheetDate)
 
-            def activityDataRange = getActivityDataRange(INDEX_ACTIVITY_DATA_START, daysInMonth)
+                def activityDataRange = getActivityDataRange(INDEX_ACTIVITY_DATA_START, daysInMonth)
 
-            // Get activities
-            Iterator<Row> rows = sheet.rowIterator()
-            rows.eachWithIndex { Row row, int rowIndex ->
-                String activityName = getActivityName(row)
-                if (activityName){
-                    // Remove trailing whitespaces
-                    activityName = activityName.trim()
-                    // Currently iterating over activities?
-                    checkActivity = iteratingOverActivityRows(activityName) ?: checkActivity
+                // Get activities
+                Iterator<Row> rows = sheet.rowIterator()
+                rows.eachWithIndex { Row row, int rowIndex ->
+                    String activityName = getActivityName(row)
+                    if (activityName){
+                        // Remove trailing whitespaces
+                        activityName = activityName.trim()
+                        // Currently iterating over activities?
+                        checkActivity = iteratingOverActivityRows(activityName) ?: checkActivity
 
-                    if (checkActivity && !IGNORED_ACTIVITIES.contains(activityName)){
-                        // Get activity
-                        Activity activity = findOrCreateActivity(activityName)
+                        if (checkActivity && !IGNORED_ACTIVITIES.contains(activityName)){
+                            // Get activity
+                            Activity activity = findOrCreateActivity(activityName)
 
-                        // Create and save a workday for each date on activity row
-                        activityDataRange.eachWithIndex { int columnIndex, int index ->
-                            Date date = sheetDate.plusDays(index).toDate()
-                            double hours = 0
-                            if(row.getCell(columnIndex) && row.getCell(columnIndex).getCellType() == 0){
-                                // Get hours value and round to 2 decimals
-                                hours = row.getCell(columnIndex)?.numericCellValue
-                                hours = hours.round(2)
-                            }
+                            // Create and save a workday for each date on activity row
+                            activityDataRange.eachWithIndex { int columnIndex, int index ->
+                                Date date = sheetDate.plusDays(index).toDate()
+                                double hours = 0
+                                if(row.getCell(columnIndex) && row.getCell(columnIndex).getCellType() == 0){
+                                    // Get hours value and round to 2 decimals
+                                    hours = row.getCell(columnIndex)?.numericCellValue
+                                    hours = hours.round(2)
+                                }
 
-                            if(hours > 0){
-                                createAndSaveWorkday(user, activity, date, hours)
+                                if(hours > 0){
+                                    createAndSaveWorkday(user, activity, date, hours)
+                                }
                             }
                         }
                     }
                 }
             }
+        } else {
+            println 'missing user name'
         }
+
     }
 
     private String getActivityName(Row row){

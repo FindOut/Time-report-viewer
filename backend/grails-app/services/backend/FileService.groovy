@@ -2,6 +2,8 @@ package backend
 
 import grails.transaction.Transactional
 
+import java.util.zip.ZipFile
+
 @Transactional
 class FileService {
 
@@ -12,5 +14,18 @@ class FileService {
         fileParts.transferTo(localFile)
 
         return localFile
+    }
+
+    ZipFile downloadZipFromUrl(String url){
+        new File("temp/TimeReports.zip").withOutputStream { out ->
+            try {
+                new URL(url).withInputStream { from ->  out << from; }
+            } catch (e) {
+                println 'Bad url: ' + url
+                throw e
+            }
+        }.close()
+
+        new ZipFile(new File('temp/TimeReports.zip'))
     }
 }
