@@ -113,6 +113,15 @@ log4j.main = {
 }
 
 
+// #################
+// LDAP config is in external config file
+// #################
+
+
+
+
+
+
 
 
 ////cors config.

@@ -1,7 +1,9 @@
 package backend
 
-class PageController {
+import grails.plugin.springsecurity.annotation.Secured
 
+class PageController {
+    @Secured(['IS_AUTHENTICATED_FULLY'])
     def index() {
         render view: '../index'
     }

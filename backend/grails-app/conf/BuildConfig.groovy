@@ -60,9 +60,10 @@ grails.project.dependency.resolution = {
 
         // plugins for the compile step
         compile ':spring-security-core:2.0-RC4'
-        compile ':spring-security-rest:1.4.1', {
-            excludes: 'spring-security-core'
-        }
+//        compile ':spring-security-rest:1.4.1', {
+//            excludes: 'spring-security-core'
+//        }
+        compile ":spring-security-ldap:2.0-RC2"
 
         compile ":scaffolding:2.1.2"
         compile ':cache:1.1.7'
