@@ -12,6 +12,7 @@ var FilterStore = require('./filter/FilterStore');
 
 var Filter = require('../app/filter/Filter.jsx');
 var WorkdayViewer = require('../app/workdayViewer/workdayViewer');
+var Login = require('../app/Login');
 
 var App = React.createClass({
     getInitialState: function () {
@@ -60,8 +61,7 @@ var App = React.createClass({
 
     render : function(){
         if(!LoginStore.isAuthorized()){
-            console.log('not logged in');
-            LoginStore.login('username', 'password');
+            return (<Login></Login>);
         } else {
             console.log('logged in');
             return (
@@ -71,7 +71,6 @@ var App = React.createClass({
                 </div>
             )
         }
-        return (<div></div>);
 
     }
 });

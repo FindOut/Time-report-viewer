@@ -12,6 +12,7 @@ module.exports = Reflux.createStore({
     },
 
     login: function(username, password){
+        console.log('going to login');
         var credentials = {
                 username: username,
                 password: password
@@ -33,6 +34,8 @@ module.exports = Reflux.createStore({
                         console.log(data);
                     }
             };
+
+        console.log(credentials);
 
         DBService.login(credentials, statusCodeCallbacks);
     }
