@@ -1,7 +1,7 @@
 'use strict';
 var React = require('react');
 var Reflux = require('reflux');
-var AppConfig = require('./AppConfig');
+var LoginStore = require('../app/stores/LoginStore');
 
 require('../app/index.scss');
 
@@ -14,6 +14,20 @@ var Filter = require('../app/filter/Filter.jsx');
 var WorkdayViewer = require('../app/workdayViewer/workdayViewer');
 
 var App = React.createClass({
+    getInitialState: function () {
+        return {
+            loggedIn: false
+        }
+    },
+    setLoggedIn: function(){ // this is to trigger re rendering when logged in
+        var loggedIn = LoginStore.isAuthorized();
+
+        if(this.loggedIn !== loggedIn){
+            this.setState({
+                loggedIn: loggedIn
+            });
+        }
+    },
     componentWillMount: function(){
         var filterProperties = [
             {
@@ -41,36 +55,24 @@ var App = React.createClass({
 
         FilterStore.setFilterConfiguration(filterProperties);
         FilterStore.listen(WorkdayStore.fetchWorkdays);
+        LoginStore.listen(this.setLoggedIn);
     },
 
     render : function(){
-        console.log('doing login');
-        $.ajax({
-            url: AppConfig.serverURL + '/login',
-            //crossDomain: true,
-            type: 'POST',
-            dataType: 'json',
-            contentType: "application/json; charset=UTF-8",
-            data: JSON.stringify({
-                username: 'test',
-                password: 'test'
-            })
-            //beforeSend: function (xhr) {
-            //xhr.setRequestHeader(
-            //    'authorization',
-            //    'Basic ' + btoa('test:test'));
-            //}
-        }).then(function(data){
-            console.log('test');
-            console.log(data);
-        }.bind(this));
+        if(!LoginStore.isAuthorized()){
+            console.log('not logged in');
+            LoginStore.login('username', 'password');
+        } else {
+            console.log('logged in');
+            return (
+                <div id="pageContainer">
+                    <Filter/>
+                    <WorkdayViewer/>
+                </div>
+            )
+        }
+        return (<div></div>);
 
-        return (
-            <div id="pageContainer">
-                <Filter/>
-                <WorkdayViewer/>
-            </div>
-        )
     }
 });
 

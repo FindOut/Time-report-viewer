@@ -2,7 +2,7 @@ package backend
 
 import grails.rest.Resource
 
-@Resource(uri='/activities')
+@Resource(uri='/api/activities')
 class Activity {
 
     String name

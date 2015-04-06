@@ -2,7 +2,7 @@ package backend
 
 import grails.rest.Resource
 
-@Resource(uri='/users')
+@Resource(uri='/api/users')
 class User {
     String name
 

@@ -117,14 +117,16 @@ log4j.main = {
 // LDAP config is in external config file
 // #################
 
-
+grails.plugin.springsecurity.controllerAnnotations.staticRules = [
+        '/**': ['IS_AUTHENTICATED_FULLY']
+]
 //cors config.
 cors.url.pattern = ['/api/*']
 //cors.enabled=true
 cors.headers=[
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true,
-        'Access-Control-Allow-Headers': 'origin, authorization, accept, content-type, x-requested-with',
+        'Access-Control-Allow-Headers': 'x-auth-token, origin, authorization, accept, content-type, x-requested-with',
         'Access-Control-Allow-Methods': 'GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS',
         'Access-Control-Max-Age': 3600
 ]
@@ -142,9 +144,9 @@ grails.plugin.springsecurity.rest.login.passwordPropertyName='password'
 //logout
 grails.plugin.springsecurity.rest.logout.endpointUrl='/api/logout'
 //
-////token generation
-//grails.plugin.springsecurity.rest.token.generation.useSecureRandom=true
-//grails.plugin.springsecurity.rest.token.generation.useUUID=false
+//token generation
+grails.plugin.springsecurity.rest.token.generation.useSecureRandom=true
+grails.plugin.springsecurity.rest.token.generation.useUUID=false
 
 //token storage
 //use memcached.
@@ -168,23 +170,23 @@ grails.plugin.springsecurity.rest.logout.endpointUrl='/api/logout'
 ////use cache as storage
 //grails.plugin.springsecurity.rest.token.storage.useGrailsCache=true
 //grails.plugin.springsecurity.rest.token.storage.grailsCacheName='xauth-token'
-//
+
 ////token rendering
 //grails.plugin.springsecurity.rest.token.rendering.usernamePropertyName='username'
 //grails.plugin.springsecurity.rest.token.rendering.authoritiesPropertyName='roles'
 //grails.plugin.springsecurity.rest.token.rendering.tokenPropertyName='token'
-//
-//
-////token validate
-//grails.plugin.springsecurity.rest.token.validation.useBearerToken = true
-//
-////if disable 'Bearer', you can configure a custom header.
-////grails.plugin.springsecurity.rest.token.validation.useBearerToken = false
-////grails.plugin.springsecurity.rest.token.rendering.tokenPropertyName   access_token
-////grails.plugin.springsecurity.rest.token.validation.headerName = 'x-auth-token'
-//grails.plugin.springsecurity.rest.token.validation.active=true
-//grails.plugin.springsecurity.rest.token.validation.endpointUrl='/api/validate'
-//
+
+
+//token validate
+grails.plugin.springsecurity.rest.token.validation.useBearerToken = true
+
+//if disable 'Bearer', you can configure a custom header.
+grails.plugin.springsecurity.rest.token.validation.useBearerToken = false
+grails.plugin.springsecurity.rest.token.validation.headerName = 'x-auth-token'
+grails.plugin.springsecurity.rest.token.validation.active=true
+grails.plugin.springsecurity.rest.token.validation.endpointUrl='/api/validate'
+//grails.plugin.springsecurity.rest.token.rendering.tokenPropertyName   access_token
+
 grails{
     plugin{
         springsecurity{

@@ -1,5 +1,6 @@
 package backend
 
+import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
@@ -21,6 +22,7 @@ class WorkdayController extends RestfulController{
      List activities
 
      */
+    @Secured(['IS_AUTHENTICATED_FULLY'])
     def index() {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
         Date fromDate = params.from ? formatter.parseDateTime(params.from).toDate() : null;
