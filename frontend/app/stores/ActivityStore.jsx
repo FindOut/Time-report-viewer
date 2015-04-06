@@ -12,14 +12,14 @@ module.exports = Reflux.createStore({
         return this.activities;
     },
     fetchActivityData: function () {
-        $.ajax({
-            url: AppConfig.serverURL + '/activities.json?max=-1',
-            crossDomain: true
-        }).then(function (activities) {
-            this.activities = _.sortBy(activities, function(activity){ // sort activities by name
-                return activity.name;
-            });
-            this.trigger(this.activities);
-        }.bind(this));
+        //$.ajax({
+        //    url: AppConfig.serverURL + '/activities.json?max=-1',
+        //    crossDomain: true
+        //}).then(function (activities) {
+        //    this.activities = _.sortBy(activities, function(activity){ // sort activities by name
+        //        return activity.name;
+        //    });
+        //    this.trigger(this.activities);
+        //}.bind(this));
     }
 });

@@ -37,14 +37,36 @@ module.exports = Reflux.createStore({
     },
 
     fetchWorkdays: function(filterData){
+        console.log('doing login');
         $.ajax({
-            url: AppConfig.serverURL + '/workdays.json?&max=-1',
+            url: AppConfig.serverURL + '/login',
             crossDomain: true,
-            data: filterData
+            //headers: {
+            //    authorization : "Basic"
+            //},
+            type: 'get',
+            dataType: 'json',
+            //xhrFields: {
+            //    'origin': '*'
+            //},
+            //beforeSend: function (xhr) {
+                //xhr.setRequestHeader(
+                //    'Authorization',
+                //    'Basic ' + btoa('test:test'));
+            //}
         }).then(function(data){
-            this.workdays = data;
-            this.setMetaProperties();
-            this.trigger(this.workdays);
+            console.log('test');
+            console.log(data);
         }.bind(this));
+
+        //$.ajax({
+        //    url: AppConfig.serverURL + '/workdays.json?&max=-1',
+        //    crossDomain: true,
+        //    data: filterData
+        //}).then(function(data){
+        //    this.workdays = data;
+        //    this.setMetaProperties();
+        //    this.trigger(this.workdays);
+        //}.bind(this));
     }
 });

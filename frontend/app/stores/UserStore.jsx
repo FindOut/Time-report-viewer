@@ -8,16 +8,16 @@ module.exports = Reflux.createStore({
         return this.users;
     },
     fetchUsers: function () {
-        $.ajax({
-                url: AppConfig.serverURL + '/users.json?&max=-1',
-                crossDomain: true
-            }).then(function(users){
-            this.users = _.sortBy(users, function(user){ // sort activities by name
-                return user.name;
-            });
-
-            this.trigger(this.users);
-        }.bind(this));
+        //$.ajax({
+        //        url: AppConfig.serverURL + '/users.json?&max=-1',
+        //        crossDomain: true
+        //    }).then(function(users){
+        //    this.users = _.sortBy(users, function(user){ // sort activities by name
+        //        return user.name;
+        //    });
+        //
+        //    this.trigger(this.users);
+        //}.bind(this));
     },
 
     init: function(){

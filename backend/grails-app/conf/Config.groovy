@@ -118,61 +118,53 @@ log4j.main = {
 // #################
 
 
-
-
-
-
-
-
-////cors config.
-////cors.enabled=true
-////cors.url.pattern = '/api/*'
-//cors.headers=[
-//        'Access-Control-Allow-Origin': '*',
-//        'Access-Control-Allow-Credentials': true,
-//        'Access-Control-Allow-Headers': 'origin, authorization, accept, content-type, x-requested-with',
-//        'Access-Control-Allow-Methods': 'GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS',
-//        'Access-Control-Max-Age': 3600
-//]
+//cors config.
+cors.url.pattern = ['/api/*']
+//cors.enabled=true
+cors.headers=[
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+        'Access-Control-Allow-Headers': 'origin, authorization, accept, content-type, x-requested-with',
+        'Access-Control-Allow-Methods': 'GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS',
+        'Access-Control-Max-Age': 3600
+]
 //
 //
 ////Config for Spring Security REST plugin
 //
 ////login
-//grails.plugin.springsecurity.rest.login.active=true
-//grails.plugin.springsecurity.rest.login.endpointUrl="/api/login"
-//grails.plugin.springsecurity.rest.login.failureStatusCode=401
-//grails.plugin.springsecurity.rest.login.useJsonCredentials=true
-//grails.plugin.springsecurity.rest.login.usernamePropertyName='username'
-//grails.plugin.springsecurity.rest.login.passwordPropertyName='password'
+grails.plugin.springsecurity.rest.login.active=true
+grails.plugin.springsecurity.rest.login.failureStatusCode=401
+grails.plugin.springsecurity.rest.login.useJsonCredentials=true
+grails.plugin.springsecurity.rest.login.usernamePropertyName='username'
+grails.plugin.springsecurity.rest.login.passwordPropertyName='password'
 //
-////logout
-//grails.plugin.springsecurity.rest.logout.endpointUrl='/api/logout'
-//
+//logout
+grails.plugin.springsecurity.rest.logout.endpointUrl='/api/logout'
 //
 ////token generation
 //grails.plugin.springsecurity.rest.token.generation.useSecureRandom=true
 //grails.plugin.springsecurity.rest.token.generation.useUUID=false
+
+//token storage
+//use memcached.
+//grails.plugin.springsecurity.rest.token.storage.useMemcached  false
+//grails.plugin.springsecurity.rest.token.storage.memcached.hosts   localhost:11211
+//grails.plugin.springsecurity.rest.token.storage.memcached.username    ''
+//grails.plugin.springsecurity.rest.token.storage.memcached.password    ''
+//grails.plugin.springsecurity.rest.token.storage.memcached.expiration  3600
+
+//use GROM
+//grails.plugin.springsecurity.rest.token.storage.useGorm   false
+//grails.plugin.springsecurity.rest.token.storage.gorm.tokenDomainClassName null
+//grails.plugin.springsecurity.rest.token.storage.gorm.tokenValuePropertyName   tokenValue
+//grails.plugin.springsecurity.rest.token.storage.gorm.usernamePropertyName username
+//class AuthenticationToken {
 //
-////token storage
-//// use memcached.
-////grails.plugin.springsecurity.rest.token.storage.useMemcached  false
-////grails.plugin.springsecurity.rest.token.storage.memcached.hosts   localhost:11211
-////grails.plugin.springsecurity.rest.token.storage.memcached.username    ''
-////grails.plugin.springsecurity.rest.token.storage.memcached.password    ''
-////grails.plugin.springsecurity.rest.token.storage.memcached.expiration  3600
-//
-////use GROM
-////grails.plugin.springsecurity.rest.token.storage.useGorm   false
-////grails.plugin.springsecurity.rest.token.storage.gorm.tokenDomainClassName null
-////grails.plugin.springsecurity.rest.token.storage.gorm.tokenValuePropertyName   tokenValue
-////grails.plugin.springsecurity.rest.token.storage.gorm.usernamePropertyName username
-////class AuthenticationToken {
-////
-////  String tokenValue
-////  String username
-////}
-//
+//  String tokenValue
+//  String username
+//}
+
 ////use cache as storage
 //grails.plugin.springsecurity.rest.token.storage.useGrailsCache=true
 //grails.plugin.springsecurity.rest.token.storage.grailsCacheName='xauth-token'
@@ -193,20 +185,19 @@ log4j.main = {
 //grails.plugin.springsecurity.rest.token.validation.active=true
 //grails.plugin.springsecurity.rest.token.validation.endpointUrl='/api/validate'
 //
-////grails{
-////    plugin{
-////        springsecurity{
-////            filterChain{
-////                chainMap = [
-////                        '/api/guest/**': 'anonymousAuthenticationFilter,restTokenValidationFilter,restExceptionTranslationFilter,filterInvocationInterceptor',
-////                        '/api/**': 'JOINED_FILTERS,-exceptionTranslationFilter,-authenticationProcessingFilter,-securityContextPersistenceFilter',  // Stateless chain
-////                        '/**': 'JOINED_FILTERS,-restTokenValidationFilter,-restExceptionTranslationFilter'                                          // Traditional chain
-////                ]
-////            }
-////
-////            rest {
-////                token { validation { enableAnonymousAccess = true } }
-////            }
-////        }
-////    }
-////}
+grails{
+    plugin{
+        springsecurity{
+            filterChain{
+                chainMap = [
+                        '/api/**': 'JOINED_FILTERS,-exceptionTranslationFilter,-authenticationProcessingFilter,-securityContextPersistenceFilter',  // Stateless chain
+                        '/**': 'JOINED_FILTERS,-restTokenValidationFilter,-restExceptionTranslationFilter'                                          // Traditional chain
+                ]
+            }
+
+            rest {
+                token { validation { enableAnonymousAccess = true } }
+            }
+        }
+    }
+}

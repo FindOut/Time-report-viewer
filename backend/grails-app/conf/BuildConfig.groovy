@@ -60,9 +60,9 @@ grails.project.dependency.resolution = {
 
         // plugins for the compile step
         compile ':spring-security-core:2.0-RC4'
-//        compile ':spring-security-rest:1.4.1', {
-//            excludes: 'spring-security-core'
-//        }
+        compile ':spring-security-rest:1.5.0.RC1', {
+            excludes: 'spring-security-core'
+        }
         compile ":spring-security-ldap:2.0-RC2"
 
         compile ":scaffolding:2.1.2"
@@ -75,7 +75,7 @@ grails.project.dependency.resolution = {
         runtime ":hibernate4:4.3.5.4" // or ":hibernate:3.6.10.16"
         runtime ":database-migration:1.4.0"
         runtime ":jquery:1.11.1"
-        runtime ":cors:1.1.6"
+//        runtime ":cors:1.1.6" // included in spring security rest
         // Uncomment these to enable additional asset-pipeline capabilities
         //compile ":sass-asset-pipeline:1.7.4"
         //compile ":less-asset-pipeline:1.7.0"
