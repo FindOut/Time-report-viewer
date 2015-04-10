@@ -2,7 +2,7 @@ package backend
 
 import grails.rest.Resource
 
-@Resource(uri='/workday')
+@Resource(uri='/api/workday')
 class Workday {
 
     static belongsTo = [user: User]

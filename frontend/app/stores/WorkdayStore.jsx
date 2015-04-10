@@ -1,4 +1,5 @@
 var AppConfig = require('../AppConfig');
+var DBService = require('../DBService');
 var Reflux = require('reflux');
 var _ = require('lodash');
 
@@ -32,19 +33,13 @@ module.exports = Reflux.createStore({
         }));
     },
 
-    setCurrentActivities: function(){
-        var activities = [];
+    setWorkdays: function(data){
+        this.workdays = data;
+        this.setMetaProperties();
+        this.trigger(this.workdays);
     },
 
     fetchWorkdays: function(filterData){
-        $.ajax({
-            url: AppConfig.serverURL + '/workdays.json?&max=-1',
-            crossDomain: true,
-            data: filterData
-        }).then(function(data){
-            this.workdays = data;
-            this.setMetaProperties();
-            this.trigger(this.workdays);
-        }.bind(this));
+        DBService.get('/workdays.json?&max=-1', this.setWorkdays, filterData);
     }
 });

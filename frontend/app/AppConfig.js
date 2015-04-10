@@ -1,4 +1,5 @@
 module.exports = {
-    serverURL: 'http://ceras.se/report'
-    //sererURL: 'http://localhost/backend'
+    serverURL: 'https://ceras.se/report/api',
+    //serverURL: 'http://localhost:8080/backend/api',
+    accessToken: {}
 };

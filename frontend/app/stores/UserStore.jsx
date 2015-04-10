@@ -1,5 +1,6 @@
-var AppConfig = require('../AppConfig'),
-    Reflux = require('reflux');
+var DBService = require('../DBService'),
+    Reflux = require('reflux'),
+    LoginStore = require('./LoginStore');
 
 module.exports = Reflux.createStore({
     users: [],
@@ -7,20 +8,18 @@ module.exports = Reflux.createStore({
     getUsers: function(){
         return this.users;
     },
-    fetchUsers: function () {
-        $.ajax({
-                url: AppConfig.serverURL + '/users.json?&max=-1',
-                crossDomain: true
-            }).then(function(users){
-            this.users = _.sortBy(users, function(user){ // sort activities by name
-                return user.name;
-            });
+    setUsers: function(users){
+        this.users = _.sortBy(users, function(user){ // sort activities by name
+            return user.name;
+        });
 
-            this.trigger(this.users);
-        }.bind(this));
+        this.trigger(this.users);
+    },
+    fetchUsers: function () {
+        DBService.get('/users.json?&max=-1', this.setUsers);
     },
 
     init: function(){
-        this.fetchUsers();
+        LoginStore.listen(this.fetchUsers);
     }
 });

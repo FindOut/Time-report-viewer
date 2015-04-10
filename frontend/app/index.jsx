@@ -1,7 +1,7 @@
 'use strict';
 var React = require('react');
 var Reflux = require('reflux');
-
+var LoginStore = require('../app/stores/LoginStore');
 
 require('../app/index.scss');
 
@@ -12,8 +12,23 @@ var FilterStore = require('./filter/FilterStore');
 
 var Filter = require('../app/filter/Filter.jsx');
 var WorkdayViewer = require('../app/workdayViewer/workdayViewer');
+var Login = require('../app/Login');
 
 var App = React.createClass({
+    getInitialState: function () {
+        return {
+            loggedIn: false
+        }
+    },
+    setLoggedIn: function(){ // this is to trigger re rendering when logged in
+        var loggedIn = LoginStore.isAuthorized();
+
+        if(this.loggedIn !== loggedIn){
+            this.setState({
+                loggedIn: loggedIn
+            });
+        }
+    },
     componentWillMount: function(){
         var filterProperties = [
             {
@@ -41,15 +56,20 @@ var App = React.createClass({
 
         FilterStore.setFilterConfiguration(filterProperties);
         FilterStore.listen(WorkdayStore.fetchWorkdays);
+        LoginStore.listen(this.setLoggedIn);
     },
 
     render : function(){
-        return (
-            <div id="pageContainer">
-                <Filter/>
-                <WorkdayViewer/>
-            </div>
-        )
+        if(!LoginStore.isAuthorized()){
+            return (<Login></Login>);
+        } else {
+            return (
+                <div id="pageContainer">
+                    <Filter/>
+                    <WorkdayViewer/>
+                </div>
+            )
+        }
     }
 });
 
