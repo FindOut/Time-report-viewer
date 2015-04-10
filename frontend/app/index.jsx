@@ -63,7 +63,6 @@ var App = React.createClass({
         if(!LoginStore.isAuthorized()){
             return (<Login></Login>);
         } else {
-            console.log('logged in');
             return (
                 <div id="pageContainer">
                     <Filter/>
@@ -71,7 +70,6 @@ var App = React.createClass({
                 </div>
             )
         }
-
     }
 });
 

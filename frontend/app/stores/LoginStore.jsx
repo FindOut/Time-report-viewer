@@ -12,7 +12,6 @@ module.exports = Reflux.createStore({
     },
 
     login: function(username, password){
-        console.log('going to login');
         var credentials = {
                 username: username,
                 password: password
@@ -24,18 +23,14 @@ module.exports = Reflux.createStore({
             statusCodeCallbacks = {
                     200: function(token){ // OK
                         setToken(token);
-                        console.log(token);
                     },
                     400: function(){ // Bad request
-                        console.log('bad login');
+                        console.log('bad login params');
                     },
                     401: function(data){ // Unauthorised
                         console.log('Wrong username and/or password');
-                        console.log(data);
                     }
             };
-
-        console.log(credentials);
 
         DBService.login(credentials, statusCodeCallbacks);
     }
