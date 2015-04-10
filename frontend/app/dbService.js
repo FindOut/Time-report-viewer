@@ -14,7 +14,6 @@ module.exports = {
         }.bind(this));
     },
     login: function(credentials, statusCodeCallbacks){
-        console.log('logging in');
         $.ajax({
             url: AppConfig.serverURL + '/login',
             type: 'POST',
