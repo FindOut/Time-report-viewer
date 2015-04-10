@@ -27,7 +27,7 @@ For this to work in "production" this file must also be precent in <tomcat_home>
 
 Configuration in tomcat:
 
-<tomcat_home>/conf/server.xml:
+-tomcat_home-/conf/server.xml:
 
 ```
 <Connector port="80" protocol="HTTP/1.1"
@@ -41,8 +41,8 @@ Configuration in tomcat:
 		          secure="true" sslProtocol="TLS" />
 ```
 
-<tomcat_home>/conf/web.xml:
-to be added just before "</web-app>
+-tomcat_home-/conf/web.xml:
+to be added just before "\</web-app\>"
 ```
 <security-constraint>
 	<web-resource-collection>
