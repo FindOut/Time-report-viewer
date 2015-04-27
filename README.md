@@ -1,5 +1,7 @@
 # Time-report-viewer
 
+// Guide used to create certs: http://blog.matoski.com/articles/node-express-generate-ssl/
+
 To get this project to work there are some things that need to be done.
 
 In the "backend" map there needs to be a file called "backend-config.groovy" containing some configuration that should not be made public,
@@ -23,7 +25,7 @@ grails.plugin.springsecurity.ldap.authorities.groupSearchBase = '' // "ou=xxx, d
 grails.plugin.springsecurity.ldap.search.base = '' // "ou=xxx, dc=xxx, dc=xxx"
 ```
 
-For this to work in "production" this file must also be precent in <tomcat_home>/lib
+For this to work in "production" this file must also be precent in -tomcat_home-/lib
 
 Configuration in tomcat:
 
