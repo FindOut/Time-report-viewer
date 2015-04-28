@@ -6,16 +6,6 @@ import java.util.zip.ZipFile
 
 @Transactional
 class FileService {
-
-    File createFileFromParams(fileParts, String webRootDir) {
-        File userDir = new File(webRootDir)
-        userDir.mkdirs()
-        File localFile = new File(userDir, fileParts.originalFilename as String)
-        fileParts.transferTo(localFile)
-
-        return localFile
-    }
-
     ZipFile downloadZipFromUrl(String url){
         new File("temp/TimeReports.zip").withOutputStream { out ->
             try {
@@ -27,5 +17,19 @@ class FileService {
         }.close()
 
         new ZipFile(new File('temp/TimeReports.zip'))
+    }
+
+    static Boolean isFileTimeReport(String fileName){
+        fileName = fileName.toLowerCase()
+        Boolean isTimeReport = true
+
+        isTimeReport = isTimeReport && fileName.contains(' - tidrapport')
+        isTimeReport = isTimeReport && fileName.contains('.xls')
+
+        isTimeReport = isTimeReport && !fileName.contains('konfliktkopia')
+        isTimeReport = isTimeReport && !fileName.contains('conflicted copy')
+        isTimeReport = isTimeReport && !fileName.contains('justering')
+
+        return isTimeReport
     }
 }

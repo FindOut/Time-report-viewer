@@ -4,18 +4,30 @@ package backend
 import grails.transaction.Transactional
 import grails.util.Holders
 
+import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
 @Transactional
 class ImportDataService {
 
-    def excelFileParserService
     def fileService
 
     def importDataFromDropbox() {
         String url = Holders.config.dropbox.time_report.folder.url
         ZipFile zipFile = fileService.downloadZipFromUrl(url)
 
-        excelFileParserService.parseFilesInZip(zipFile)
+        zipFile.entries().each { ZipEntry entry ->
+            List entryNameParts = entry.name.split('/')
+
+            if(entryNameParts.size() > 1 && !entry.name.contains('MACOSX')){
+                String fileName = entryNameParts[-1]
+
+                if(fileService.isFileTimeReport(fileName)){
+                    TimereportParser_2014 parser2014 = new TimereportParser_2014(zipFile.getInputStream(entry), fileName)
+                    parser2014.parseWorkbook()
+                }
+            }
+        }
+        zipFile.close()
     }
 }
