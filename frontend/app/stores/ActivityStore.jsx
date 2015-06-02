@@ -12,12 +12,12 @@ module.exports = Reflux.createStore({
     getActivities: function(){
         return this.activities;
     },
-    setActivities: function(users){
-        this.users = _.sortBy(users, function(user){ // sort activities by name
-            return user.name;
+    setActivities: function(activities){
+        this.activities = _.sortBy(activities, function(activity){ // sort activities by name
+            return activity.name;
         });
 
-        this.trigger(this.users);
+        this.trigger(this.activities);
     },
     fetchActivityData: function () {
         DBService.get('/activities.json?&max=-1', this.setActivities);
