@@ -18,6 +18,7 @@ module.exports = React.createClass({
         return (
             <div id="login">
                 <div>Please Login (Confluence credentials)</div>
+                <div>For now it's necessary to first go to <a href="https://ceras.se/report/">https://ceras.se/report/</a> and accept the certificate</div>
                 <form>
                     <p>
                         <label for="username">Username:</label>
