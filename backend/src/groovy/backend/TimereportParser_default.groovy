@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.joda.time.DateTime
 
-class TimereportParser_2014 {
+class TimereportParser_default {
     Workbook EXCEL_FILE = null
     Boolean EXCEL_FILE_OK = false
     User USER = null
@@ -51,7 +51,7 @@ class TimereportParser_2014 {
     private Boolean ITERATING_OVER_ACTIVITY = false
 
 
-    TimereportParser_2014(File file){
+    TimereportParser_default(File file){
         if(file){
             EXCEL_FILE = WorkbookFactory.create(file)
             FILENAME = file.getName()
@@ -62,7 +62,7 @@ class TimereportParser_2014 {
         }
     }
 
-    TimereportParser_2014(InputStream stream, String fileName){
+    TimereportParser_default(InputStream stream, String fileName){
         try {
             EXCEL_FILE = WorkbookFactory.create(stream)
             FILENAME = fileName

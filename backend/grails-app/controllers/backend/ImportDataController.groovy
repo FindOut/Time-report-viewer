@@ -20,8 +20,8 @@ class ImportDataController {
         CommonsMultipartFile file = request.getFile('file')
 
         if (fileService.isFileTimeReport(file.originalFilename)){
-            TimereportParser_2014 parser2014 = new TimereportParser_2014(file.inputStream, file.originalFilename)
-            parser2014.parseWorkbook()
+            TimereportParser_default parserDefault = new TimereportParser_default(file.inputStream, file.originalFilename)
+            parserDefault.parseWorkbook()
         }
 
         render text: 'test'

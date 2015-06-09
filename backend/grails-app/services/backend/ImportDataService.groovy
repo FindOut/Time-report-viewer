@@ -23,7 +23,7 @@ class ImportDataService {
                 String fileName = entryNameParts[-1]
 
                 if(fileService.isFileTimeReport(fileName)){
-                    TimereportParser_2014 parser2014 = new TimereportParser_2014(zipFile.getInputStream(entry), fileName)
+                    TimereportParser_default parser2014 = new TimereportParser_default(zipFile.getInputStream(entry), fileName)
                     parser2014.parseWorkbook()
                 }
             }
