@@ -7,7 +7,10 @@ class Activity {
 
     String name
 
+    OfferArea offerArea
+
     static constraints = {
-        name nullable: false, unique: true
+        name nullable: false
+        offerArea nullable: true
     }
 }

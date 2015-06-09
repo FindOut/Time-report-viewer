@@ -21,6 +21,7 @@ class TimereportParser_default {
     // Location of the username for each report month
     private Map USER_NAME_CELL = [row: 1,column: 10]
     // Index of the column where activity name is found
+    private int INDEX_EO_NAME = 0
     private int INDEX_ACTIVITY_NAME = 1
     private int INDEX_ACTIVITY_DATA_START = 3
     // Activities to ignore
@@ -49,6 +50,9 @@ class TimereportParser_default {
     private int STRING_TYPE = 1
     private int MONTHS_IN_YEAR = 12
     private Boolean ITERATING_OVER_ACTIVITY = false
+
+    // For performance
+    private offerAreas = OfferArea.list()
 
 
     TimereportParser_default(File file){
@@ -88,10 +92,11 @@ class TimereportParser_default {
                 // Get activities
                 Iterator<Row> rows = sheet.rowIterator()
                 rows.eachWithIndex { Row row, int rowIndex ->
-                    String activityName = getActivityName(row.getCell(INDEX_ACTIVITY_NAME))
+                    String activityName = getStringValue(row.getCell(INDEX_ACTIVITY_NAME))
+                    String eoName = getStringValue(row.getCell(INDEX_EO_NAME))
 
                     if (ITERATING_OVER_ACTIVITY && !IGNORED_ACTIVITIES.contains(activityName)){
-                        Activity activity = findOrCreateActivity(activityName)
+                        Activity activity = findOrSaveByNameAndOfferArea(activityName, eoName)
 
                         if(activity){
                             // Create and save a workday for each date on activity row
@@ -111,7 +116,7 @@ class TimereportParser_default {
                         }
                     }
 
-                    // Check if next row will be an activirty row
+                    // Check if next row will be an activity row
                     setIteratingOverActivityRows(activityName)
                 }
             }
@@ -151,13 +156,13 @@ class TimereportParser_default {
         return new DateTime(getCell(sheet, DATE_CELL).dateCellValue).getYear()
     }
 
-    private String getActivityName(Cell cell){
+    private String getStringValue(Cell cell){
         // Trim those pesky whitespaces!
         (cell?.getCellType() == STRING_TYPE) ? cell.getStringCellValue().trim() : null
     }
 
-    private static Activity findOrCreateActivity(String activityName){
-        activityName ? Activity.findOrSaveByName(activityName) : null
+    private Activity findOrSaveByNameAndOfferArea(String activityName, String eoName){
+        activityName ? Activity.findOrSaveByNameAndOfferArea(activityName, offerAreas.find{it.name == eoName}) : null
     }
 
     private void createAndSaveWorkday(activity, date, hours){
