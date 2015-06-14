@@ -5,7 +5,7 @@ module.exports = React.createClass({
         var renderedActivities = this.props.activities.map(function (activity) {
             return (
                 <li>
-                    {activity.name}
+                    {activity.name} | <i>{activity.offerArea.name}</i>
                 </li>
             )
         });

@@ -21,7 +21,7 @@ class TimereportParser_default {
     // Location of the username for each report month
     private Map USER_NAME_CELL = [row: 1,column: 10]
     // Index of the column where activity name is found
-    private int INDEX_EO_NAME = 0
+    private int INDEX_OFFER_AREA_NAME = 0
     private int INDEX_ACTIVITY_NAME = 1
     private int INDEX_ACTIVITY_DATA_START = 3
     // Activities to ignore
@@ -93,10 +93,11 @@ class TimereportParser_default {
                 Iterator<Row> rows = sheet.rowIterator()
                 rows.eachWithIndex { Row row, int rowIndex ->
                     String activityName = getStringValue(row.getCell(INDEX_ACTIVITY_NAME))
-                    String eoName = getStringValue(row.getCell(INDEX_EO_NAME))
+                    String offerAreaName = getStringValue(row.getCell(INDEX_OFFER_AREA_NAME))
 
                     if (ITERATING_OVER_ACTIVITY && !IGNORED_ACTIVITIES.contains(activityName)){
-                        Activity activity = findOrSaveByNameAndOfferArea(activityName, eoName)
+                        OfferArea offerArea = (offerAreaName == null) ? findOrSaveOfferAreaByName('Not Specified') : findOrSaveOfferAreaByName(offerAreaName)
+                        Activity activity = findOrSaveActivityByNameAndOfferArea(activityName, offerArea)
 
                         if(activity){
                             // Create and save a workday for each date on activity row
@@ -161,8 +162,19 @@ class TimereportParser_default {
         (cell?.getCellType() == STRING_TYPE) ? cell.getStringCellValue().trim() : null
     }
 
-    private Activity findOrSaveByNameAndOfferArea(String activityName, String eoName){
-        activityName ? Activity.findOrSaveByNameAndOfferArea(activityName, offerAreas.find{it.name == eoName}) : null
+    private Activity findOrSaveActivityByNameAndOfferArea(String activityName, OfferArea offerArea){
+        activityName ? Activity.findOrSaveByNameAndOfferArea(activityName, offerArea) : null
+    }
+
+    private OfferArea findOrSaveOfferAreaByName(String offerAreaName){
+        OfferArea offerArea = offerAreas.find{it.name == offerAreaName}
+        if(!offerArea){
+            offerArea = OfferArea.findOrCreateByName(offerAreaName)
+            offerArea.save()
+            offerAreas << offerArea
+        }
+
+        offerArea
     }
 
     private void createAndSaveWorkday(activity, date, hours){

@@ -6,6 +6,7 @@ var LoginStore = require('../app/stores/LoginStore');
 require('../app/index.scss');
 
 var ActivityStore = require('../app/stores/ActivityStore');
+var OfferAreaStore = require('../app/stores/OfferAreaStore');
 var UserStore = require('../app/stores/UserStore');
 var WorkdayStore = require('../app/stores/WorkdayStore');
 var FilterStore = require('./filter/FilterStore');
@@ -39,6 +40,12 @@ var App = React.createClass({
                 label: 'To',
                 serverProperty: 'to',
                 type: 'date'
+            }, {
+                label: 'Offer areas',
+                type: 'select',
+                serverProperty: 'offerAreas',
+                multiple: true,
+                dataStore: OfferAreaStore
             }, {
                 label: 'Activities',
                 type: 'select',

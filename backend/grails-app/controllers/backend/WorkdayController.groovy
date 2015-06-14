@@ -35,11 +35,17 @@ class WorkdayController extends RestfulController{
             }
         }
 
-
         List activityIds = []
         if(params['activities[]']){
             params.list('activities[]').each{
                 activityIds.push(it as Long)
+            }
+        }
+
+        List offerAreaIds = []
+        if(params['offerAreas[]']){
+            params.list('offerAreas[]').each{
+                offerAreaIds.push(it as Long)
             }
         }
 
@@ -57,7 +63,13 @@ class WorkdayController extends RestfulController{
                     'in'('id', activityIds)
                 }
             }
-
+            if(offerAreaIds){
+                activity{
+                    offerArea {
+                        'in'('id', offerAreaIds)
+                    }
+                }
+            }
         }
 
         respond workdays

@@ -3,7 +3,7 @@ package backend
 import grails.rest.Resource
 
 @Resource(uri='/api/activities')
-class Activity {
+class Activity { // Activities has a custom JSON marshaller
 
     String name
 
