@@ -7,17 +7,21 @@ import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.joda.time.DateTime
 
+import java.sql.Time
+
 class TimereportParser_default {
     Workbook EXCEL_FILE = null
     Boolean EXCEL_FILE_OK = false
     User USER = null
 
     // The fiscal year this parser is valid for
-    private int TIMEREPORT_PARSER_YEAR = 2014
+    private List TIMEREPORT_PARSER_YEAR = [2014, 2015]
     // Index of first sheet with a date
     private int FIRST_REPORT_SHEET= 1
     // Location of the date cell for each report month
     private Map DATE_CELL = [row: 2,column: 1]
+    // Location of month standard time
+    private Map STANDARD_TIME_CELL = [row: 0, column: 10]
     // Location of the username for each report month
     private Map USER_NAME_CELL = [row: 1,column: 10]
     // Index of the column where activity name is found
@@ -50,6 +54,7 @@ class TimereportParser_default {
     private int STRING_TYPE = 1
     private int MONTHS_IN_YEAR = 12
     private Boolean ITERATING_OVER_ACTIVITY = false
+    private Map YEAR_STANDARD_TIMES = [:]
 
     // For performance
     private offerAreas = OfferArea.list()
@@ -61,6 +66,7 @@ class TimereportParser_default {
             FILENAME = file.getName()
             setUser()
             verifyTimereport()
+            setMonthStandardTimes()
         } else {
             println 'No file to parse'
         }
@@ -72,6 +78,7 @@ class TimereportParser_default {
             FILENAME = fileName
             setUser()
             verifyTimereport()
+            setMonthStandardTimes()
         } catch (e) {
             println 'broken file: ' + fileName
             println e
@@ -80,12 +87,17 @@ class TimereportParser_default {
 
     void parseWorkbook(){
         if(EXCEL_FILE_OK){
+            createMonthStandardTimes()
+
             (1..MONTHS_IN_YEAR).each{ int sheetIndex ->
                 Sheet sheet = EXCEL_FILE.getSheetAt(sheetIndex)
 
                 // Get date on sheet
                 DateTime sheetDate = new DateTime(getCell(sheet, DATE_CELL).dateCellValue)
+
                 int daysInMonth = getDaysInMonth(sheetDate)
+
+
 
                 def activityDataRange = getActivityDataRange(INDEX_ACTIVITY_DATA_START, daysInMonth)
 
@@ -129,7 +141,7 @@ class TimereportParser_default {
         Boolean excelFileOk = true
 
         // Is the correct parser used?
-        if(!fileYear == TIMEREPORT_PARSER_YEAR){
+        if(!(fileYear in TIMEREPORT_PARSER_YEAR)){
             excelFileOk = false
             println "Wrong parser used. Tried to parse $fileYear file with $TIMEREPORT_PARSER_YEAR parser"
         }
@@ -141,6 +153,25 @@ class TimereportParser_default {
         }
 
         EXCEL_FILE_OK = excelFileOk
+    }
+
+    private setMonthStandardTimes(){
+        Sheet myDashboard = EXCEL_FILE.getSheetAt(0)
+
+        MONTHS_IN_YEAR.times { timeReportMonthIndex ->
+            int standardTime = getCell(myDashboard, [row: 5, column: (1+timeReportMonthIndex)]).cellFormula.split('\\*')[1].toInteger()
+            YEAR_STANDARD_TIMES << [(timeReportMonthIndex): standardTime]
+        }
+    }
+
+    private createMonthStandardTimes(){
+        DateTime firstReportMonth = new DateTime(getCell(EXCEL_FILE.getSheetAt(FIRST_REPORT_SHEET), DATE_CELL).dateCellValue)
+
+        MONTHS_IN_YEAR.times { timeReportMonthIndex ->
+            int standardTime = YEAR_STANDARD_TIMES[timeReportMonthIndex] as int
+            Date timeReportMonth = firstReportMonth.plusMonths(timeReportMonthIndex).toDate()
+            TimeReportMonth.findOrSaveByDateAndStandardTime(timeReportMonth, standardTime)
+        }
     }
 
     private double getActivityHour(Cell cell){
