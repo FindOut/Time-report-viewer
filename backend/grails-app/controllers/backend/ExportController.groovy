@@ -1,8 +1,8 @@
 package backend
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.joda.time.DateTime
 
 class ExportController {
@@ -10,7 +10,7 @@ class ExportController {
     def exportService
 
     def profitabilityBasis() {
-        DateTime startOfFiscalYear = new DateTime().withTimeAtStartOfDay().minusYears(1).withDayOfMonth(1).withMonthOfYear(5)
+        DateTime startOfFiscalYear = new DateTime().withTimeAtStartOfDay().withDayOfMonth(1).withMonthOfYear(5)
 
         Map offerAreaMapping = [
                 'Prod': 'D - Produktutveckling',
@@ -18,10 +18,11 @@ class ExportController {
                 'VU': 'D - Verktygsutveckling',
                 'Prod-I': 'I - Produktutveckling',
                 'Proc-I': 'I - Processutveckling',
-                'VU-INV': 'I - Verktygsutveckling'
+                'VU-INV': 'I - Verktygsutveckling',
+                'Not Specified': 'Ej specificerat'
         ]
 
-        Workbook excelFile = new HSSFWorkbook()
+        Workbook excelFile = new XSSFWorkbook()
         excelFile.createSheet('Utfall timmar intäkter')
 
         Sheet sheet = excelFile.getSheetAt(0)
@@ -42,18 +43,20 @@ class ExportController {
 
         sheet.getRow(7).getCell(0).setCellValue('Summering')
         sheet.getRow(8).getCell(1).setCellValue('Rapporterade timmar')
+        sheet.getRow(9).getCell(1).setCellValue('Produktionskapacitet')
+        sheet.getRow(10).getCell(1).setCellValue('Produktionstimmar')
 
         sheet.getRow(11).getCell(0).setCellValue('EOn')
 
-        sheet.getRow(18).getCell(0).setCellValue('Annan FindOut tid')
-        sheet.getRow(19).getCell(1).setCellValue('Varav OH')
-        sheet.getRow(20).getCell(1).setCellValue('Headcounts på OH')
-        sheet.getRow(21).getCell(1).setCellValue('Varav Kompetensutveckling')
+        sheet.getRow(19).getCell(0).setCellValue('Annan FindOut tid')
+        sheet.getRow(20).getCell(1).setCellValue('Varav OH')
+        sheet.getRow(21).getCell(1).setCellValue('Headcounts på OH')
+        sheet.getRow(22).getCell(1).setCellValue('Varav Kompetensutveckling')
 
-        sheet.getRow(22).getCell(0).setCellValue('Annan tid')
-        sheet.getRow(23).getCell(1).setCellValue('Varav Sjukdom, VAB, etc')
-        sheet.getRow(24).getCell(1).setCellValue('Varav Semester')
-        sheet.getRow(25).getCell(1).setCellValue('Varav Föräldrarledighet ')
+        sheet.getRow(23).getCell(0).setCellValue('Annan tid')
+        sheet.getRow(24).getCell(1).setCellValue('Varav Sjukdom, VAB, etc')
+        sheet.getRow(25).getCell(1).setCellValue('Varav Semester')
+        sheet.getRow(26).getCell(1).setCellValue('Varav Föräldrarledighet ')
 
         List timereportMonths = TimeReportMonth.withCriteria {
             between('date', startOfFiscalYear.toDate(), startOfFiscalYear.plusYears(1).minusDays(1).toDate())
@@ -99,7 +102,7 @@ class ExportController {
             // write monthly data to excel
 
             sheet.getRow(2).getCell(3+monthIndex).setCellValue(iteratingMonth.monthOfYear().asShortText)
-            sheet.getRow(3).getCell(3+monthIndex).setCellValue(reportMonth.standardTime)
+            sheet.getRow(3).getCell(3+monthIndex).setCellValue(reportMonth?.standardTime)
             sheet.getRow(4).getCell(3+monthIndex).setCellValue(budget)
             sheet.getRow(5).getCell(3+monthIndex).setCellValue(reportedHours)
             sheet.getRow(6).getCell(3+monthIndex).setCellValue(reportedHoursBudgetDiff)
@@ -108,29 +111,19 @@ class ExportController {
 
             offerAreaMapping.eachWithIndex{ offerArea, index ->
                 sheet.getRow(12+index).getCell(1).setCellValue(offerArea.value)
-                sheet.getRow(12+index).getCell(3+monthIndex).setCellValue(offerAreas[offerArea.key])
+                println offerAreas[offerArea.key]
+                sheet.getRow(12+index).getCell(3+monthIndex).setCellValue(offerAreas[offerArea.key] ?: 0)
             }
 
-            sheet.getRow(21).getCell(3+monthIndex).setCellValue(skillsDevelopment)
+            sheet.getRow(22).getCell(3+monthIndex).setCellValue(skillsDevelopment)
 
-            sheet.getRow(23).getCell(3+monthIndex).setCellValue(sickness + vab)
-            sheet.getRow(24).getCell(3+monthIndex).setCellValue(vacation)
-            sheet.getRow(25).getCell(3+monthIndex).setCellValue(parentalLeave)
+            sheet.getRow(24).getCell(3+monthIndex).setCellValue(sickness + vab)
+            sheet.getRow(25).getCell(3+monthIndex).setCellValue(vacation)
+            sheet.getRow(26).getCell(3+monthIndex).setCellValue(parentalLeave)
 
         }
 
-        println "Kompetensutveckling" + exportService.getSkillsDevelopment(startOfFiscalYear)
-
-
-        int monthStandardTime = TimeReportMonth.withCriteria {
-            between('date', startOfFiscalYear.toDate(), startOfFiscalYear.plusMonths(1).minusDays(1).toDate())
-
-            projections {
-                property('standardTime')
-            }
-        }[0]
-
-        response.setHeader("Content-disposition", /attachment; filename=input till lonsamhetsmodell.xls/)
+        response.setHeader("Content-disposition", /attachment; filename=input till lonsamhetsmodell.xlsx/)
         response.contentType = 'application/excel'
         excelFile.write(response.outputStream)
         response.outputStream.flush()
