@@ -7,8 +7,6 @@ import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.joda.time.DateTime
 
-import java.sql.Time
-
 class TimereportParser_default {
     Workbook EXCEL_FILE = null
     Boolean EXCEL_FILE_OK = false
@@ -50,11 +48,10 @@ class TimereportParser_default {
 
     // Housekeeping
     private FILENAME = ''
-    private int INTEGER_TYPE = 0
+    private List NUMBER_TYPES = [0,2]
     private int STRING_TYPE = 1
     private int MONTHS_IN_YEAR = 12
     private Boolean ITERATING_OVER_ACTIVITY = false
-    private Map YEAR_STANDARD_TIMES = [:]
 
     // For performance
     private offerAreas = OfferArea.list()
@@ -66,7 +63,6 @@ class TimereportParser_default {
             FILENAME = file.getName()
             setUser()
             verifyTimereport()
-            setMonthStandardTimes()
         } else {
             println 'No file to parse'
         }
@@ -78,7 +74,6 @@ class TimereportParser_default {
             FILENAME = fileName
             setUser()
             verifyTimereport()
-            setMonthStandardTimes()
         } catch (e) {
             println 'broken file: ' + fileName
             println e
@@ -87,16 +82,17 @@ class TimereportParser_default {
 
     void parseWorkbook(){
         if(EXCEL_FILE_OK){
-            createMonthStandardTimes()
+            createTimeReportMonths()
 
             (1..MONTHS_IN_YEAR).each{ int sheetIndex ->
                 Sheet sheet = EXCEL_FILE.getSheetAt(sheetIndex)
 
                 // Get date on sheet
                 DateTime sheetDate = new DateTime(getCell(sheet, DATE_CELL).dateCellValue)
-
                 int daysInMonth = getDaysInMonth(sheetDate)
+                double monthStandardTime = getCell(sheet, [row: 0, column: 10]).numericCellValue
 
+                UserTimeReportMonth.findOrSaveByUserAndStandardTimeAndTimeReportMonth(USER, monthStandardTime, sheetDate.toDate())
 
 
                 def activityDataRange = getActivityDataRange(INDEX_ACTIVITY_DATA_START, daysInMonth)
@@ -106,6 +102,8 @@ class TimereportParser_default {
                 rows.eachWithIndex { Row row, int rowIndex ->
                     String activityName = getStringValue(row.getCell(INDEX_ACTIVITY_NAME))
                     String offerAreaName = getStringValue(row.getCell(INDEX_OFFER_AREA_NAME))
+
+                    setIteratingOverActivityRows(activityName)
 
                     if (ITERATING_OVER_ACTIVITY && !IGNORED_ACTIVITIES.contains(activityName)){
                         OfferArea offerArea = (offerAreaName == null) ? findOrSaveOfferAreaByName('Not Specified') : findOrSaveOfferAreaByName(offerAreaName)
@@ -128,9 +126,6 @@ class TimereportParser_default {
                             }
                         }
                     }
-
-                    // Check if next row will be an activity row
-                    setIteratingOverActivityRows(activityName)
                 }
             }
         }
@@ -155,28 +150,24 @@ class TimereportParser_default {
         EXCEL_FILE_OK = excelFileOk
     }
 
-    private setMonthStandardTimes(){
+    private createTimeReportMonths(){
         Sheet myDashboard = EXCEL_FILE.getSheetAt(0)
+        DateTime FirstSheetDate = new DateTime(getCell(EXCEL_FILE.getSheetAt(FIRST_REPORT_SHEET), DATE_CELL).dateCellValue)
 
         MONTHS_IN_YEAR.times { timeReportMonthIndex ->
-            int standardTime = getCell(myDashboard, [row: 5, column: (1+timeReportMonthIndex)]).cellFormula.split('\\*')[1].toInteger()
-            YEAR_STANDARD_TIMES << [(timeReportMonthIndex): standardTime]
-        }
-    }
+            Cell standardTimeCell = getCell(myDashboard, [row: 5, column: (1+timeReportMonthIndex)])
 
-    private createMonthStandardTimes(){
-        DateTime firstReportMonth = new DateTime(getCell(EXCEL_FILE.getSheetAt(FIRST_REPORT_SHEET), DATE_CELL).dateCellValue)
+            if(standardTimeCell.cellType == 2){
+                int standardTime = standardTimeCell.cellFormula.split('\\*')[1].toInteger()
 
-        MONTHS_IN_YEAR.times { timeReportMonthIndex ->
-            int standardTime = YEAR_STANDARD_TIMES[timeReportMonthIndex] as int
-            Date timeReportMonth = firstReportMonth.plusMonths(timeReportMonthIndex).toDate()
-            TimeReportMonth.findOrSaveByDateAndStandardTime(timeReportMonth, standardTime)
+                TimeReportMonth.findOrSaveByDateAndStandardTime(FirstSheetDate.plusMonths(timeReportMonthIndex).toDate(), standardTime)
+            }
         }
     }
 
     private double getActivityHour(Cell cell){
         // Get hours value and round to 2 decimals
-        (cell && cell.getCellType() == INTEGER_TYPE ) ? cell.numericCellValue.round(2) : 0
+        (cell && cell.getCellType() in NUMBER_TYPES ) ? cell.numericCellValue.round(2) : 0
     }
 
     private deleteWorkday(Activity activity, Date date){
