@@ -10,7 +10,7 @@ class ExportController {
     def exportService
 
     def profitabilityBasis() {
-        DateTime startOfFiscalYear = new DateTime().withTimeAtStartOfDay().withDayOfMonth(1).withMonthOfYear(5)
+        DateTime startOfFiscalYear = new DateTime().withTimeAtStartOfDay().minusYears(1).withDayOfMonth(1).withMonthOfYear(5)
 
         Map offerAreaMapping = [
                 'Prod': 'D - Produktutveckling',
@@ -37,7 +37,7 @@ class ExportController {
         sheet.getRow(2).getCell(2).setCellValue('Ackumulerat hittills')
 
         sheet.getRow(3).getCell(1).setCellValue('Timmar per månad')
-        sheet.getRow(4).getCell(1).setCellValue('Buget')
+        sheet.getRow(4).getCell(1).setCellValue('Budget')
         sheet.getRow(5).getCell(1).setCellValue('Rapporterade timmar')
         sheet.getRow(6).getCell(1).setCellValue('Diff Budget/Utfall')
 
@@ -64,6 +64,34 @@ class ExportController {
             it.date
         }
 
+        double totalBudget = UserTimeReportMonth.withCriteria {
+            between('timeReportMonth', startOfFiscalYear.toDate(), startOfFiscalYear.plusYears(1).minusDays(1).toDate())
+
+            projections {
+                sum('standardTime')
+            }
+        }[0] ?: 0
+
+        List totalWorkdayActivities = Workday.withCriteria {
+            between('date', startOfFiscalYear.toDate(), startOfFiscalYear.plusYears(1).minusDays(1).toDate())
+
+            projections {
+                groupProperty('activity')
+                sum('hours')
+            }
+        }
+
+        Map totalOfferAreas = exportService.getOfferAreas(totalWorkdayActivities)
+        double totalProductionHours = totalOfferAreas.findAll{it.key != 'Not Specified'}*.value.sum()
+        double totalReportedHours = totalWorkdayActivities*.getAt(1).sum()
+        double totalVacation = totalWorkdayActivities.find{it[0].name == 'Semester'}?.getAt(1) ?: 0
+        double totalParentalLeave = totalWorkdayActivities.findAll{it[0].name.contains('Föräldrarledig')}*.getAt(1).sum() ?: 0
+        double totalSickness =  totalWorkdayActivities.find{it[0].name == 'Sjukdom'}?.getAt(1) ?:0
+        double totalVab = totalWorkdayActivities.find{it[0].name == 'VAB'}?.getAt(1)?:0
+        double totalSkillsDevelopment = totalWorkdayActivities.find{it[0].name == 'Kompetensutveckling'}?.getAt(1)?:0
+
+
+
 
         // gets monthly data for offerAreas and activities
         12.times { monthIndex ->
@@ -78,7 +106,6 @@ class ExportController {
                     sum('hours')
                 }
             }
-
 
 
             double vacation = workdayActivities.find{it[0].name == 'Semester'}?.getAt(1) ?: 0
@@ -98,6 +125,8 @@ class ExportController {
             double reportedHoursBudgetDiff = reportedHours - budget
 
             Map offerAreas = exportService.getOfferAreas(workdayActivities)
+            double productionHours = offerAreas.findAll{it.key != 'Not Specified'}*.value.sum()
+
 
             // write monthly data to excel
 
@@ -109,19 +138,43 @@ class ExportController {
 
             sheet.getRow(8).getCell(3+monthIndex).setCellValue(reportedHours)
 
+            sheet.getRow(10).getCell(3+monthIndex).setCellValue(productionHours)
+
             offerAreaMapping.eachWithIndex{ offerArea, index ->
                 sheet.getRow(12+index).getCell(1).setCellValue(offerArea.value)
-                println offerAreas[offerArea.key]
                 sheet.getRow(12+index).getCell(3+monthIndex).setCellValue(offerAreas[offerArea.key] ?: 0)
             }
 
+            sheet.getRow(19).getCell(3+monthIndex).setCellValue(skillsDevelopment)
             sheet.getRow(22).getCell(3+monthIndex).setCellValue(skillsDevelopment)
 
+            sheet.getRow(23).getCell(3+monthIndex).setCellValue(sickness + vab + vacation + parentalLeave)
             sheet.getRow(24).getCell(3+monthIndex).setCellValue(sickness + vab)
             sheet.getRow(25).getCell(3+monthIndex).setCellValue(vacation)
             sheet.getRow(26).getCell(3+monthIndex).setCellValue(parentalLeave)
 
         }
+
+        // Write accumulated data to excel
+        sheet.getRow(4).getCell(2).setCellValue(totalBudget)
+        sheet.getRow(5).getCell(2).setCellValue(totalReportedHours)
+
+        sheet.getRow(8).getCell(2).setCellValue(totalReportedHours)
+
+        sheet.getRow(10).getCell(2).setCellValue(totalProductionHours)
+
+        offerAreaMapping.eachWithIndex{ offerArea, index ->
+            sheet.getRow(12+index).getCell(2).setCellValue(totalOfferAreas[offerArea.key] ?: 0)
+        }
+
+        sheet.getRow(22).getCell(2).setCellValue(totalSkillsDevelopment)
+
+        sheet.getRow(23).getCell(2).setCellValue(totalSickness + totalVab + totalVacation + totalParentalLeave)
+        sheet.getRow(24).getCell(2).setCellValue(totalSickness + totalVab)
+        sheet.getRow(25).getCell(2).setCellValue(totalVacation)
+        sheet.getRow(26).getCell(2).setCellValue(totalParentalLeave)
+
+
 
         response.setHeader("Content-disposition", /attachment; filename=input till lonsamhetsmodell.xlsx/)
         response.contentType = 'application/excel'

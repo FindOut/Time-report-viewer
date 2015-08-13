@@ -65,7 +65,7 @@ class ExportService {
                 if(columnIndex == 2 && rowIndex == 2){
                     row.getCell(columnIndex).setCellStyle(blueishGrayBold)
                 }
-                if(columnIndex == 2 && rowIndex > 2){
+                if(columnIndex == 2 && rowIndex > 2 && rowIndex < 27){
                     row.getCell(columnIndex).setCellStyle(blueishGray)
                 }
 
