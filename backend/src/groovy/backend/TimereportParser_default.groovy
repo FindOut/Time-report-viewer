@@ -26,22 +26,6 @@ class TimereportParser_default {
     private int INDEX_OFFER_AREA_NAME = 0
     private int INDEX_ACTIVITY_NAME = 1
     private int INDEX_ACTIVITY_DATA_START = 3
-    // Activities to ignore
-    private List IGNORED_ACTIVITIES = [
-            'Debiterbar tid per EO',
-            'Investerad tid i EO ',
-            '<fyll i aktivitet 1 h�r>',
-            '< osv.. >',
-            'Annan FindOut tid ',
-            '. . .',
-            'Annan tid',
-    ]
-    private List ACTIVITY_SEGMENTS = [
-            'Debiterbar tid per EO',
-            'Investerad tid i EO ',
-            'Annan FindOut tid ',
-            'Annan tid'
-    ]
 
     // String indicating when to stop iterating over activities
     private String END_OF_DATA_ROWS = 'Summa normaltid'
@@ -51,10 +35,11 @@ class TimereportParser_default {
     private List NUMBER_TYPES = [0,2]
     private int STRING_TYPE = 1
     private int MONTHS_IN_YEAR = 12
-    private Boolean ITERATING_OVER_ACTIVITY = false
 
     // For performance
     private offerAreas = OfferArea.list()
+    private DateTime sheetDate = null
+    private Sheet currentSheet = null
 
 
     TimereportParser_default(File file){
@@ -80,52 +65,79 @@ class TimereportParser_default {
         }
     }
 
+    List categoryRowColor = [153, 204, 255]
+
+    List getCategoryDividersForSheet(Sheet sheet){
+        sheet.rowIterator().findIndexValues { Row row ->
+            row.getCell(1)?.cellStyle?.fillForegroundColorColor?.triplet == categoryRowColor || getStringValue(row.getCell(1))?.trim() == "Summa normaltid"
+        }
+    }
+
     void parseWorkbook(){
         if(EXCEL_FILE_OK){
             createTimeReportMonths()
 
             (1..MONTHS_IN_YEAR).each{ int sheetIndex ->
-                Sheet sheet = EXCEL_FILE.getSheetAt(sheetIndex)
+                currentSheet = EXCEL_FILE.getSheetAt(sheetIndex)
 
-                // Get date on sheet
-                DateTime sheetDate = new DateTime(getCell(sheet, DATE_CELL).dateCellValue)
-                int daysInMonth = getDaysInMonth(sheetDate)
-                double monthStandardTime = getCell(sheet, [row: 0, column: 10]).numericCellValue
+                // set date on sheet
+                sheetDate = new DateTime(getCell(currentSheet, DATE_CELL).dateCellValue)
+                double monthStandardTime = getCell(currentSheet, [row: 0, column: 10]).numericCellValue.round(2)
 
                 UserTimeReportMonth.findOrSaveByUserAndStandardTimeAndTimeReportMonth(USER, monthStandardTime, sheetDate.toDate())
 
-
-                def activityDataRange = getActivityDataRange(INDEX_ACTIVITY_DATA_START, daysInMonth)
-
                 // Get activities
-                Iterator<Row> rows = sheet.rowIterator()
-                rows.eachWithIndex { Row row, int rowIndex ->
-                    String activityName = getStringValue(row.getCell(INDEX_ACTIVITY_NAME))
-                    String offerAreaName = getStringValue(row.getCell(INDEX_OFFER_AREA_NAME))
+                parseActivityGroups()
+            }
+        }
+    }
 
-                    setIteratingOverActivityRows(activityName)
+    private void parseActivityGroups(){
+        List dividerIndexes = getCategoryDividersForSheet(currentSheet)
+        int lastDividerIndex = dividerIndexes.size()-1
 
-                    if (ITERATING_OVER_ACTIVITY && !IGNORED_ACTIVITIES.contains(activityName)){
-                        OfferArea offerArea = (offerAreaName == null) ? findOrSaveOfferAreaByName('Not Specified') : findOrSaveOfferAreaByName(offerAreaName)
-                        Activity activity = findOrSaveActivityByNameAndOfferArea(activityName, offerArea)
+        dividerIndexes.eachWithIndex{ dividerRowNumber, dividerIndex ->
+            if(dividerIndex != lastDividerIndex){
+                int start = dividerRowNumber as int
+                int end = dividerIndexes[dividerIndex+1] as int
 
-                        if(activity){
-                            // Create and save a workday for each date on activity row
-                            activityDataRange.eachWithIndex { int columnIndex, int index ->
-                                Date workdayDate = sheetDate.plusDays(index).toDate()
+                ((start+1)..(end-1)).each{ int rowNumber ->
+                    parseRow(currentSheet.getRow(rowNumber), dividerIndex)
+                }
+            }
+        }
+    }
 
-                                // Get activity hours from cell
-                                double hours = getActivityHour(row.getCell(columnIndex))
+    List<String> defaultOfferAreaNamesForDividers = [
+            'Not Specified',
+            'Not Specified',
+            'Other FindOut time',
+            'Other time'
+    ]
 
-                                if(hours > 0){
-                                    createAndSaveWorkday(activity, workdayDate, hours)
-                                } else {
-                                    // If activity hours == 0 remove the workday if one exists
-                                    deleteWorkday(activity, workdayDate)
-                                }
-                            }
-                        }
-                    }
+    private void parseRow(Row row, int dividerIndex){
+        String activityName = getStringValue(row.getCell(INDEX_ACTIVITY_NAME))?.trim()
+        String offerAreaName = getStringValue(row.getCell(INDEX_OFFER_AREA_NAME))?.trim()
+
+        OfferArea offerArea = (offerAreaName == null) ? findOrSaveOfferAreaByName(defaultOfferAreaNamesForDividers[dividerIndex]) : findOrSaveOfferAreaByName(offerAreaName)
+        Activity activity = Activity.findByName(activityName) // Don't create an activity if there's no data for it
+
+        if(activityName){
+            def activityDataRange = getActivityDataRange(INDEX_ACTIVITY_DATA_START, getDaysInMonth(sheetDate))
+
+            activityDataRange.each{ int columnIndex ->
+                Date workdayDate = sheetDate.plusDays(columnIndex).toDate()
+
+                // Get activity hours from cell
+                double hours = getActivityHour(row.getCell(columnIndex))
+
+                if(hours > 0){
+                    // Now that we have data, create an activity if we didn't have one
+                    activity ? activity : findOrSaveActivityByNameAndOfferArea(activityName, offerArea)
+                    createAndSaveWorkday(activity, workdayDate, hours)
+                } else {
+                    // If activity hours == 0 remove the workday if one exists
+                    deleteWorkday(activity, workdayDate)
                 }
             }
         }
@@ -171,7 +183,9 @@ class TimereportParser_default {
     }
 
     private deleteWorkday(Activity activity, Date date){
-        Workday.findByUserAndActivityAndDate(USER, activity, date)?.delete()
+        if(activity){
+            Workday.findByUserAndActivityAndDate(USER, activity, date)?.delete()
+        }
     }
 
     private int getTimereportYear(){
@@ -184,7 +198,7 @@ class TimereportParser_default {
         (cell?.getCellType() == STRING_TYPE) ? cell.getStringCellValue().trim() : null
     }
 
-    private Activity findOrSaveActivityByNameAndOfferArea(String activityName, OfferArea offerArea){
+    private static Activity findOrSaveActivityByNameAndOfferArea(String activityName, OfferArea offerArea){
         activityName ? Activity.findOrSaveByNameAndOfferArea(activityName, offerArea) : null
     }
 
@@ -241,17 +255,5 @@ class TimereportParser_default {
     }
     private static Cell getCell(Sheet sheet, map ){
         sheet.getRow(map.row).getCell(map.column)
-    }
-
-    private void setIteratingOverActivityRows(String activityName) {
-        // Remove trailing whitespaces
-        activityName = activityName?.trim()
-
-        // Set ITERATING_OVER_ACTIVITY to true if we have entered the activity segments
-        if (ACTIVITY_SEGMENTS.contains(activityName)){
-            ITERATING_OVER_ACTIVITY = true
-        } else if (activityName == END_OF_DATA_ROWS ){
-            ITERATING_OVER_ACTIVITY = false
-        }
     }
 }
