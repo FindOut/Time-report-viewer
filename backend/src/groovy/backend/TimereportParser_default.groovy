@@ -131,11 +131,11 @@ class TimereportParser_default {
         if(activityName){
             def activityDataRange = getActivityDataRange(INDEX_ACTIVITY_DATA_START, getDaysInMonth(sheetDate))
 
-            activityDataRange.each{ int columnIndex ->
-                Date workdayDate = sheetDate.plusDays(columnIndex).toDate()
+            activityDataRange.eachWithIndex{ int columnNumber, index ->
+                Date workdayDate = sheetDate.plusDays(index).toDate()
 
                 // Get activity hours from cell
-                double hours = getActivityHour(row.getCell(columnIndex))
+                double hours = getActivityHour(row.getCell(columnNumber))
 
                 if(hours > 0){
                     // Now that we have data, create an activity and offer area if we didn't have one

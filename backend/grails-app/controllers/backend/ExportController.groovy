@@ -10,7 +10,7 @@ class ExportController {
     def exportService
 
     def profitabilityBasis() {
-        DateTime startOfFiscalYear = new DateTime().withTimeAtStartOfDay().minusYears(1).withDayOfMonth(1).withMonthOfYear(5)
+        DateTime startOfFiscalYear = new DateTime().withTimeAtStartOfDay().withDayOfMonth(1).withMonthOfYear(5)
 
         Map offerAreaMapping = [
                 'Prod': 'D - Produktutveckling',
@@ -108,6 +108,7 @@ class ExportController {
             }
 
 
+            double oh = workdayActivities.find{it[0].name == 'OH (används endast av OH personal)'}?.getAt(1) ?: 0
             double vacation = workdayActivities.find{it[0].name == 'Semester'}?.getAt(1) ?: 0
             double parentalLeave = workdayActivities.findAll{it[0].name.contains('Föräldrarledig')}*.getAt(1).sum() ?: 0
             double sickness =  workdayActivities.find{it[0].name == 'Sjukdom'}?.getAt(1) ?:0
@@ -121,11 +122,18 @@ class ExportController {
                     sum('standardTime')
                 }
             }[0] ?: 0
-            double reportedHours = workdayActivities.inject(0){result, workdayActivity -> result + workdayActivity[1]}
+
+            double reportedHours = workdayActivities*.getAt(1).sum() ?: 0
+
             double reportedHoursBudgetDiff = reportedHours - budget
 
             Map offerAreas = exportService.getOfferAreas(workdayActivities)
-            double productionHours = offerAreas.findAll{it.key != 'Not Specified'}*.value.sum()
+            List nonProductionOfferAreas = [
+                    'Other FindOut time',
+                    'Other time'
+            ]
+            double productionHours = offerAreas.findAll{!(it.key in nonProductionOfferAreas)}*.value?.sum() ?: 0
+            double otherFindOutTime = offerAreas.findAll{it.key == 'Other FindOut time'}*.value?.sum() ?: 0
 
 
             // write monthly data to excel
@@ -145,7 +153,8 @@ class ExportController {
                 sheet.getRow(12+index).getCell(3+monthIndex).setCellValue(offerAreas[offerArea.key] ?: 0)
             }
 
-            sheet.getRow(19).getCell(3+monthIndex).setCellValue(skillsDevelopment)
+            sheet.getRow(19).getCell(3+monthIndex).setCellValue(otherFindOutTime)
+            sheet.getRow(20).getCell(3+monthIndex).setCellValue(oh)
             sheet.getRow(22).getCell(3+monthIndex).setCellValue(skillsDevelopment)
 
             sheet.getRow(23).getCell(3+monthIndex).setCellValue(sickness + vab + vacation + parentalLeave)
