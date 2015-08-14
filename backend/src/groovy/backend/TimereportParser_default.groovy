@@ -140,7 +140,7 @@ class TimereportParser_default {
                 if(hours > 0){
                     // Now that we have data, create an activity and offer area if we didn't have one
                     offerArea = (offerAreaName == null) ? findOrSaveOfferAreaByName(defaultOfferAreaNamesForDividers[dividerIndex]) : findOrSaveOfferAreaByName(offerAreaName)
-                    activity ? activity : findOrSaveActivityByNameAndOfferArea(activityName, offerArea)
+                    activity = activity ? activity : findOrSaveActivityByNameAndOfferArea(activityName, offerArea)
 
                     createAndSaveWorkday(activity, workdayDate, hours)
                 } else {
