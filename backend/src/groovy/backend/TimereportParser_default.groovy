@@ -65,11 +65,17 @@ class TimereportParser_default {
         }
     }
 
-    List categoryRowColor = [153, 204, 255]
+    List dividerHeaders = [
+            'Debiterbar tid per EO',
+            'Investerad tid i EO',
+            'Annan FindOut tid',
+            'Annan tid',
+            'Summa normaltid'
+    ]
 
     List getCategoryDividersForSheet(Sheet sheet){
         sheet.rowIterator().findIndexValues { Row row ->
-            row.getCell(1)?.cellStyle?.fillForegroundColorColor?.triplet == categoryRowColor || getStringValue(row.getCell(1))?.trim() == "Summa normaltid"
+            getStringValue(row.getCell(1))?.trim() in dividerHeaders
         }
     }
 
@@ -119,7 +125,7 @@ class TimereportParser_default {
         String activityName = getStringValue(row.getCell(INDEX_ACTIVITY_NAME))?.trim()
         String offerAreaName = getStringValue(row.getCell(INDEX_OFFER_AREA_NAME))?.trim()
 
-        OfferArea offerArea = (offerAreaName == null) ? findOrSaveOfferAreaByName(defaultOfferAreaNamesForDividers[dividerIndex]) : findOrSaveOfferAreaByName(offerAreaName)
+        OfferArea offerArea = OfferArea.findByName(offerAreaName)// Don't create an offer area if there's no data for it
         Activity activity = Activity.findByName(activityName) // Don't create an activity if there's no data for it
 
         if(activityName){
@@ -132,8 +138,10 @@ class TimereportParser_default {
                 double hours = getActivityHour(row.getCell(columnIndex))
 
                 if(hours > 0){
-                    // Now that we have data, create an activity if we didn't have one
+                    // Now that we have data, create an activity and offer area if we didn't have one
+                    offerArea = (offerAreaName == null) ? findOrSaveOfferAreaByName(defaultOfferAreaNamesForDividers[dividerIndex]) : findOrSaveOfferAreaByName(offerAreaName)
                     activity ? activity : findOrSaveActivityByNameAndOfferArea(activityName, offerArea)
+
                     createAndSaveWorkday(activity, workdayDate, hours)
                 } else {
                     // If activity hours == 0 remove the workday if one exists
@@ -232,7 +240,7 @@ class TimereportParser_default {
         date.dayOfMonth().getMaximumValue()
     }
 
-    private setUser(){
+    private void setUser(){
         String userName = getUserName()
 
         USER = userName ? User.findOrSaveWhere(name: userName) : null
@@ -243,7 +251,10 @@ class TimereportParser_default {
         // Get name from 'Namn' fields in sheet
         (1..MONTHS_IN_YEAR).each{ int sheetIndex ->
             Sheet sheet = EXCEL_FILE.getSheetAt(sheetIndex)
-            name = name?: getCell(sheet, USER_NAME_CELL).stringCellValue
+            Cell nameCell = getCell(sheet, USER_NAME_CELL)
+            if(nameCell.cellType == STRING_TYPE){
+                name = name?: getCell(sheet, USER_NAME_CELL).stringCellValue
+            }
         }
 
         // If no name in sheets, get name from filename
