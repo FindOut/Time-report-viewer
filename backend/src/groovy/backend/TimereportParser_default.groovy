@@ -33,15 +33,32 @@ class TimereportParser_default {
     // Housekeeping
     private FILENAME = ''
     private List NUMBER_TYPES = [0,2]
+    private int FORMULA_TYPE = 2
     private int STRING_TYPE = 1
     private int MONTHS_IN_YEAR = 12
 
+    private List dividerHeaders = [
+            'Debiterbar tid per EO',
+            'Investerad tid i EO',
+            'Annan FindOut tid',
+            'Annan tid',
+            'Summa normaltid'
+    ]
+
+    private List<String> defaultOfferAreaNamesForDividers = [
+            'Not Specified',
+            'Not Specified',
+            'Other FindOut time',
+            'Other time'
+    ]
+
     // For performance
     private offerAreas = OfferArea.list()
-    private DateTime sheetDate = null
+    private DateTime currentSheetDate = null
     private Sheet currentSheet = null
 
 
+    // Parser
     TimereportParser_default(File file){
         if(file){
             EXCEL_FILE = WorkbookFactory.create(file)
@@ -65,20 +82,6 @@ class TimereportParser_default {
         }
     }
 
-    List dividerHeaders = [
-            'Debiterbar tid per EO',
-            'Investerad tid i EO',
-            'Annan FindOut tid',
-            'Annan tid',
-            'Summa normaltid'
-    ]
-
-    List getCategoryDividersForSheet(Sheet sheet){
-        sheet.rowIterator().findIndexValues { Row row ->
-            getStringValue(row.getCell(1))?.trim() in dividerHeaders
-        }
-    }
-
     void parseWorkbook(){
         if(EXCEL_FILE_OK){
             createTimeReportMonths()
@@ -86,16 +89,18 @@ class TimereportParser_default {
             (1..MONTHS_IN_YEAR).each{ int sheetIndex ->
                 currentSheet = EXCEL_FILE.getSheetAt(sheetIndex)
 
-                // set date on sheet
-                sheetDate = new DateTime(getCell(currentSheet, DATE_CELL).dateCellValue)
-                double monthStandardTime = getCell(currentSheet, [row: 0, column: 10]).numericCellValue.round(2)
+                currentSheetDate = new DateTime(getCell(currentSheet, DATE_CELL).dateCellValue)
 
-                UserTimeReportMonth.findOrSaveByUserAndStandardTimeAndTimeReportMonth(USER, monthStandardTime, sheetDate.toDate())
-
-                // Get activities
+                createUserStandardMonths()
                 parseActivityGroups()
             }
         }
+    }
+
+    private void createUserStandardMonths(){
+        double userMonthStandardTime = getCell(currentSheet, [row: 0, column: 10]).numericCellValue.round(2)
+
+        UserTimeReportMonth.findOrSaveByUserAndStandardTimeAndTimeReportMonth(USER, userMonthStandardTime, currentSheetDate.toDate())
     }
 
     private void parseActivityGroups(){
@@ -114,12 +119,11 @@ class TimereportParser_default {
         }
     }
 
-    List<String> defaultOfferAreaNamesForDividers = [
-            'Not Specified',
-            'Not Specified',
-            'Other FindOut time',
-            'Other time'
-    ]
+    private List getCategoryDividersForSheet(Sheet sheet){
+        sheet.rowIterator().findIndexValues { Row row ->
+            getStringValue(row.getCell(1))?.trim() in dividerHeaders
+        }
+    }
 
     private void parseRow(Row row, int dividerIndex){
         String activityName = getStringValue(row.getCell(INDEX_ACTIVITY_NAME))?.trim()
@@ -129,10 +133,10 @@ class TimereportParser_default {
         Activity activity = Activity.findByName(activityName) // Don't create an activity if there's no data for it
 
         if(activityName){
-            def activityDataRange = getActivityDataRange(INDEX_ACTIVITY_DATA_START, getDaysInMonth(sheetDate))
+            def activityDataRange = getActivityDataRange(INDEX_ACTIVITY_DATA_START, getDaysInMonth(currentSheetDate))
 
             activityDataRange.eachWithIndex{ int columnNumber, index ->
-                Date workdayDate = sheetDate.plusDays(index).toDate()
+                Date workdayDate = currentSheetDate.plusDays(index).toDate()
 
                 // Get activity hours from cell
                 double hours = getActivityHour(row.getCell(columnNumber))
@@ -175,10 +179,10 @@ class TimereportParser_default {
         DateTime FirstSheetDate = new DateTime(getCell(EXCEL_FILE.getSheetAt(FIRST_REPORT_SHEET), DATE_CELL).dateCellValue)
 
         MONTHS_IN_YEAR.times { timeReportMonthIndex ->
-            Cell standardTimeCell = getCell(myDashboard, [row: 5, column: (1+timeReportMonthIndex)])
+            Cell monthStandardTimeCell = getCell(myDashboard, [row: 5, column: (1+timeReportMonthIndex)])
 
-            if(standardTimeCell.cellType == 2){
-                int standardTime = standardTimeCell.cellFormula.split('\\*')[1].toInteger()
+            if(monthStandardTimeCell.cellType == FORMULA_TYPE){
+                int standardTime = monthStandardTimeCell.cellFormula.split('\\*')[1].toInteger()
 
                 TimeReportMonth.findOrSaveByDateAndStandardTime(FirstSheetDate.plusMonths(timeReportMonthIndex).toDate(), standardTime)
             }
