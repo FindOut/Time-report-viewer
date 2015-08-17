@@ -24,13 +24,13 @@ module.exports = Reflux.createStore({
     setMetaProperties: function(){
         // Get activity IDs from workdays
         this.activities = _.uniq(this.workdays.map(function(workday){
-            return workday.activity.id
-        }));
+            return workday.activity
+        }), 'id');
 
         // Get user IDs from workdays
         this.users = _.uniq(this.workdays.map(function(workday){
-            return workday.user.id
-        }));
+            return workday.user
+        }), 'id');
     },
 
     setWorkdays: function(data){

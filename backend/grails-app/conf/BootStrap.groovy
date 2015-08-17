@@ -1,4 +1,5 @@
 import backend.Activity
+import backend.Workday
 import grails.converters.JSON
 
 class BootStrap {
@@ -11,7 +12,22 @@ class BootStrap {
                     offerArea: [
                             id: it.offerArea.id,
                             name: it.offerArea.name
-                        ]
+                    ]
+            ]
+        }
+        JSON.registerObjectMarshaller(Workday) {
+            return [
+                    id: it.id,
+                    date: it.date,
+                    hours: it.hours,
+                    activity: [
+                            id: it.activity.id,
+                            name: it.activity.name
+                    ],
+                    user: [
+                            id: it.user.id,
+                            name: it.user.name
+                    ]
             ]
         }
     }

@@ -31,7 +31,12 @@ var App = React.createClass({
         }
     },
     componentWillMount: function(){
-        var filterProperties = [
+        FilterStore.listen(WorkdayStore.fetchWorkdays);
+        LoginStore.listen(this.setLoggedIn);
+    },
+
+    render : function(){
+        var filterConfiguration = [
             {
                 label: 'From',
                 serverProperty: 'from',
@@ -45,34 +50,31 @@ var App = React.createClass({
                 type: 'select',
                 serverProperty: 'offerAreas',
                 multiple: true,
+                dataAction: 'getOfferAreas',
                 dataStore: OfferAreaStore
             }, {
                 label: 'Activities',
                 type: 'select',
                 serverProperty: 'activities',
                 multiple: true,
+                dataAction: 'getActivities',
                 dataStore: ActivityStore
             }, {
                 label: 'Users',
                 type: 'select',
                 serverProperty: 'users',
                 multiple: true,
+                dataAction: 'getUsers',
                 dataStore: UserStore
             }
         ];
 
-        FilterStore.setFilterConfiguration(filterProperties);
-        FilterStore.listen(WorkdayStore.fetchWorkdays);
-        LoginStore.listen(this.setLoggedIn);
-    },
-
-    render : function(){
         if(!LoginStore.isAuthorized()){
             return (<Login></Login>);
         } else {
             return (
                 <div id="pageContainer">
-                    <Filter/>
+                    <Filter filterConfiguration={filterConfiguration}/>
                     <WorkdayViewer/>
                 </div>
             )

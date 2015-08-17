@@ -9,6 +9,10 @@ module.exports = Reflux.createStore({
     init: function () {
         LoginStore.listen(this.fetchOfferAreaData);
     },
+    getOfferAreas: function(){
+        return this.offerAreas;
+    },
+
     setOfferAreas: function(offerAreas){
         this.offerAreas = _.sortBy(offerAreas, function(offerArea){ // sort offerAreas by name
             return offerArea.name;

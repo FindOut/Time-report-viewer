@@ -22,7 +22,11 @@ module.exports = React.createClass({
     render: function(){
         var filterProperties = this.props.filterProperties,
             renderedOptions = this.getItems().map(function(dataItem){
-                return <option key={dataItem.id} value={dataItem.id}>{dataItem.name}</option>
+                if(typeof dataItem === 'object'){
+                    return <option key={dataItem.id} value={dataItem.id}>{dataItem.name}</option>
+                } else {
+                    return <option key={dataItem} value={dataItem}>{dataItem}</option>
+                }
             });
 
         return (

@@ -18,13 +18,12 @@ module.exports = React.createClass({
     },
 
     workdaysUpdated: function(workdays){
-        var currentActivityIds = WorkdayStore.getCurrentActivities();
-        //console.log(currentActivityIds);
+        var currentActivityIds = WorkdayStore.getCurrentActivities().map(function(activity){return activity.id});
         var currentActivities = _.filter(ActivityStore.getActivities(), function(activity){
             return _.contains(currentActivityIds, activity.id);
         });
 
-        var currentUserIds = WorkdayStore.getCurrentUsers();
+        var currentUserIds = WorkdayStore.getCurrentUsers().map(function(user){return user.id});
         var currentUsers = _.filter(UserStore.getUsers(), function(user){
             return _.contains(currentUserIds, user.id);
         });

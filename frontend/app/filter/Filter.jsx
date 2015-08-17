@@ -10,12 +10,13 @@ module.exports = React.createClass({
 
     getInitialState: function() {
         return {
-            filterConfiguration: [],
             filterData: {}
         };
     },
 
     createSelectFilter: function(filterProperty){
+        filterProperty.data = filterProperty.dataAction !== undefined ? this.state[filterProperty.dataAction] : filterProperty.data;
+
         return (
             <SelectFilter
                 ref={filterProperty.serverProperty}
@@ -60,18 +61,29 @@ module.exports = React.createClass({
         return filter.getDOMNode().value;
     },
 
-    componentDidMount: function(){
-        FilterStore.listen(this.filterStoreUpdated);
+    componentWillMount: function(){
+        _.each(this.props.filterConfiguration, function(filterItem){
+            if(filterItem.dataStore !== undefined && filterItem.dataAction !== undefined){
+                this.setStateForFilterItem(filterItem);
+
+                filterItem.dataStore.listen(function(){
+                    this.setStateForFilterItem(filterItem);
+                }, this);
+            }
+        }, this);
+
+        this.filterChange(); // Trigger filtering
     },
 
-    filterStoreUpdated: function(){
-        this.setState({
-            filterConfiguration: FilterStore.filterConfiguration
-        })
+    setStateForFilterItem: function(filterItem){
+        var obj = {};
+
+        obj[filterItem.dataAction] = filterItem.dataStore[filterItem.dataAction]();
+        this.setState(obj);
     },
 
     render: function(){
-        var renderedFilters = this.state.filterConfiguration.map(function(filterProperty){
+        var renderedFilters = this.props.filterConfiguration.map(function(filterProperty){
             switch (filterProperty.type) {
                 case 'select':
                     return this.createSelectFilter(filterProperty);
