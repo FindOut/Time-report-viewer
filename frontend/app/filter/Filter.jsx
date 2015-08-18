@@ -20,8 +20,7 @@ module.exports = React.createClass({
         return (
             <SelectFilter
                 ref={filterProperty.serverProperty}
-                filterProperties={filterProperty}
-                filterChange={this.filterChange}/>
+                filterProperties={filterProperty}/>
         );
     },
 
@@ -29,30 +28,9 @@ module.exports = React.createClass({
         return (
             <DateFilter
                 ref={filterProperty.serverProperty}
-                filterProperties={filterProperty}
-                filterChange={this.filterChange}/>
+                filterProperties={filterProperty}/>
         );
     },
-    filterChange: function(){
-        setTimeout(function(){
-            var data = {};
-
-            _.forEach(this.refs, function(filterData, filterName){
-                var filter = filterData.refs[filterName],
-                    filterValue;
-
-                if(filter.state.value !== undefined ){
-                    filterValue = this.getSelectValue(filterName, filter);
-                } else {
-                    filterValue = this.getInputValue(filterName, filter);
-                }
-
-                FilterStore.setFilteredValue(filterName, filterValue);
-                data[filterName] = filterValue
-            }.bind(this));
-        }.bind(this), 1);
-    },
-
     getSelectValue: function(filterName, filter){
         return filter.state.value;
     },
@@ -72,7 +50,7 @@ module.exports = React.createClass({
             }
         }, this);
 
-        this.filterChange(); // Trigger filtering
+        FilterStore.trigger();// Trigger filtering
     },
 
     setStateForFilterItem: function(filterItem){

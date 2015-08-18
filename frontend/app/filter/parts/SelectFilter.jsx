@@ -1,6 +1,8 @@
 var React = require('react');
 var _ = require('lodash');
 
+var FilterStore = require('../FilterStore');
+
 module.exports = React.createClass({
     filterChange: function(event){
         this.setState({
@@ -19,6 +21,13 @@ module.exports = React.createClass({
         });
     },
 
+    updateFilterStore: function(){
+        var filterName = this.props.filterProperties.serverProperty;
+        setTimeout(function(){
+            FilterStore.setFilteredValue(filterName, this.refs[filterName].state.value);
+        }.bind(this), 1);
+    },
+
     render: function(){
         var filterProperties = this.props.filterProperties,
             renderedOptions = this.getItems().map(function(dataItem){
@@ -35,7 +44,7 @@ module.exports = React.createClass({
                 <select
                     multiple={filterProperties.multiple}
                     ref={filterProperties.serverProperty}
-                    onChange={this.props.filterChange}>
+                    onChange={this.updateFilterStore}>
                     {renderedOptions}
                 </select>
             </li>
