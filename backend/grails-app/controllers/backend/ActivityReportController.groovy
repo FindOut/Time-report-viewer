@@ -18,7 +18,7 @@ class ActivityReportController extends RestfulController{
 
      Date from (yyyy-MM-dd)
      Date to (yyyy-MM-dd)
-     List users
+     List employees
      List activities
 
      */
@@ -28,10 +28,10 @@ class ActivityReportController extends RestfulController{
         Date fromDate = params.from ? formatter.parseDateTime(params.from).toDate() : null;
         Date toDate = params.to ? formatter.parseDateTime(params.to).toDate() : null;
 
-        List userIds = []
-        if(params['users[]']){
-            params.list('users[]').each{
-                userIds.push(it as Long)
+        List employeeIds = []
+        if(params['employees[]']){
+            params.list('employees[]').each{
+                employeeIds.push(it as Long)
             }
         }
 
@@ -53,9 +53,9 @@ class ActivityReportController extends RestfulController{
         List activityReports = criteria.list(params){
             if(fromDate){ge('date', fromDate)}
             if(toDate){le('date', toDate)}
-            if(userIds){
-                user{
-                    'in'('id', userIds)
+            if(employeeIds){
+                employee{
+                    'in'('id', employeeIds)
                 }
             }
             if(activityIds){

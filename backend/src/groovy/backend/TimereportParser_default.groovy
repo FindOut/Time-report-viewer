@@ -60,11 +60,13 @@ class TimereportParser_default {
     ]
 
     // For performance
+    private activities = Activity.list()
     private activityTypes = ActivityType.list()
     private offerAreas = OfferArea.list()
     private DateTime currentSheetDate = null
     private Sheet currentSheet = null
     private MonthlyReport currentMonthlyReport = null
+    private ActivityType currentActivityType = null
 
 
     // Parser
@@ -99,8 +101,10 @@ class TimereportParser_default {
                 currentSheet = EXCEL_FILE.getSheetAt(sheetIndex)
                 currentSheetDate = new DateTime(getCell(currentSheet, DATE_CELL).dateCellValue)
                 currentMonthlyReport = createEmployeeStandardMonth()
+                currentMonthlyReport.save(flush: true)
 
                 parseActivityGroups()
+                currentMonthlyReport.save()
             }
         }
     }
@@ -116,9 +120,13 @@ class TimereportParser_default {
         int lastDividerIndex = dividerIndexes.size()-1
 
         dividerIndexes.eachWithIndex{ dividerRowNumber, dividerIndex ->
+            currentActivityType = null
             if(dividerIndex != lastDividerIndex){
                 int start = dividerRowNumber as int
                 int end = dividerIndexes[dividerIndex+1] as int
+
+                String activityTypeName = dividerMapping[dividerHeaders[dividerIndex]]
+                currentActivityType = findOrSaveActivityTypeByName(activityTypeName)
 
                 ((start+1)..(end-1)).each{ int rowNumber ->
                     parseRow(currentSheet.getRow(rowNumber), dividerIndex)
@@ -135,16 +143,14 @@ class TimereportParser_default {
 
     private void parseRow(Row row, int dividerIndex){
         String activityName = getStringValue(row.getCell(INDEX_ACTIVITY_NAME))?.trim()
-        String activityTypeName = dividerMapping[dividerHeaders[dividerIndex]]
-        String offerAreaName = getStringValue(row.getCell(INDEX_OFFER_AREA_NAME))?.trim()
+        String offerAreaName = getStringValue(row.getCell(INDEX_OFFER_AREA_NAME))?.trim() ?: defaultOfferAreaNamesForDividers[dividerIndex]
 
-        OfferArea offerArea = OfferArea.findByName(offerAreaName)// Don't create an offer area if there's no data for it
-        ActivityType activityType = findOrSaveActivityTypeByName(activityTypeName)
-        Activity activity = Activity.findWhere(
-                name: activityName,
-                activityType: activityType,
-                offerArea: offerArea
-        ) // Don't create an activity if there's no data for it
+        OfferArea offerArea = offerAreas.find{it.name == offerAreaName}// Don't create an offer area if there's no data for it
+        Activity activity = activities.find {
+            it.name == activityName &&
+                    it.activityType == currentActivityType &&
+                    it.offerArea == offerArea
+        } // Don't create an activity if there's no data for it
 
         if(activityName){
             def activityDataRange = getActivityDataRange(INDEX_ACTIVITY_DATA_START, getDaysInMonth(currentSheetDate))
@@ -157,15 +163,8 @@ class TimereportParser_default {
 
                 if(hours > 0){
                     // Now that we have data, create an activity and offer area if we didn't have one
-                    offerArea = (offerAreaName == null) ? findOrSaveOfferAreaByName(defaultOfferAreaNamesForDividers[dividerIndex]) : findOrSaveOfferAreaByName(offerAreaName)
-
-                    if(!activity){
-                        activity = Activity.findOrSaveWhere(
-                                name: activityName,
-                                activityType: activityType,
-                                offerArea: offerArea
-                        )
-                    }
+                    offerArea = offerArea ?: findOrSaveOfferAreaByName(offerAreaName)
+                    activity = activity ?: findOrSaveActivity(activityName, offerArea)
 
                     createAndSaveWorkday(activity, activityReportDate, hours)
                 } else {
@@ -190,7 +189,7 @@ class TimereportParser_default {
             println "Wrong parser used. Tried to parse $fileYear file with $TIMEREPORT_PARSER_YEAR parser"
         }
 
-        // Does the file contain a employeename?
+        // Does the file contain a employee name?
         if(!EMPLOYEE){
             excelFileOk = false
             println "No employeename found in file: '$FILENAME'"
@@ -232,12 +231,27 @@ class TimereportParser_default {
     private OfferArea findOrSaveOfferAreaByName(String offerAreaName){
         OfferArea offerArea = offerAreas.find{it.name == offerAreaName}
         if(!offerArea){
-            offerArea = OfferArea.findOrCreateByName(offerAreaName)
+            offerArea = new OfferArea(name: offerAreaName)
             offerArea.save()
             offerAreas << offerArea
         }
 
         offerArea
+    }
+
+    private findOrSaveActivity(activityName, offerArea){
+        Activity activity = activities.find{it.name == activityName}
+        if(!activity){
+            activity = Activity.findOrCreateWhere(
+                    name: activityName,
+                    activityType: currentActivityType,
+                    offerArea: offerArea
+            )
+            activity.save()
+            activities << activity
+        }
+
+        activity
     }
 
     private ActivityType findOrSaveActivityTypeByName(String activityTypeName){
@@ -259,7 +273,6 @@ class TimereportParser_default {
         )
 
         activityReport.hours = hours
-        activityReport.save()
 
         currentMonthlyReport.addToActivityReports(activityReport)
     }
