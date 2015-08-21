@@ -31,21 +31,15 @@ module.exports = React.createClass({
                 filterProperties={filterProperty}/>
         );
     },
-    getSelectValue: function(filterName, filter){
-        return filter.state.value;
-    },
-
-    getInputValue: function(filterName, filter){
-        return filter.getDOMNode().value;
-    },
 
     componentWillMount: function(){
         _.each(this.props.filterConfiguration, function(filterItem){
             if(filterItem.dataStore !== undefined && filterItem.dataAction !== undefined){
-                this.setStateForFilterItem(filterItem);
+                this.setStateForFilterItemData(filterItem, {});
 
                 filterItem.dataStore.listen(function(){
-                    this.setStateForFilterItem(filterItem);
+                    console.log(filterItem);
+                    this.setStateForFilterItemData(filterItem, {});
                 }, this);
             }
         }, this);
@@ -53,11 +47,9 @@ module.exports = React.createClass({
         FilterStore.trigger();// Trigger filtering
     },
 
-    setStateForFilterItem: function(filterItem){
-        var obj = {};
-
-        obj[filterItem.dataAction] = filterItem.dataStore[filterItem.dataAction]();
-        this.setState(obj);
+    setStateForFilterItemData: function(filterItem, object){
+        object[filterItem.dataAction] = filterItem.dataStore[filterItem.dataAction]();
+        this.setState(object);
     },
 
     render: function(){
