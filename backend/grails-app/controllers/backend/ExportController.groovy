@@ -65,7 +65,7 @@ class ExportController {
         }
 
         double totalBudget = MonthlyReport.withCriteria {
-            between('timeReportMonth', startOfFiscalYear.toDate(), startOfFiscalYear.plusYears(1).minusDays(1).toDate())
+            between('date', startOfFiscalYear.toDate(), startOfFiscalYear.plusYears(1).minusDays(1).toDate())
 
             projections {
                 sum('standardTime')
@@ -116,7 +116,7 @@ class ExportController {
             double skillsDevelopment = activityReportActivities.find{it[0].name == 'Kompetensutveckling'}?.getAt(1)?:0
 
             double budget = MonthlyReport.withCriteria {
-                between('timeReportMonth', iteratingMonth.toDate(), iteratingMonth.plusMonths(1).minusDays(1).toDate())
+                between('date', iteratingMonth.toDate(), iteratingMonth.plusMonths(1).minusDays(1).toDate())
 
                 projections {
                     sum('standardTime')

@@ -5,14 +5,16 @@ import grails.rest.Resource
 @Resource(uri='/api/activityReports')
 class ActivityReport {
 
-    static belongsTo = [user: Employee]
+    static belongsTo = [
+            employee: Employee
+    ]
 
     Activity activity
     Date date
     double hours
 
     static constraints = {
-        user nullable: false
+        employee nullable: false
         activity nullable: false
         date nullable: false
     }

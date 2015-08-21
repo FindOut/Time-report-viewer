@@ -2,9 +2,10 @@ package backend
 
 class MonthlyReport {
 
-    static belongsTo = [user: Employee]
+    static belongsTo = [employee: Employee]
+    static hasMany = [activityReports: ActivityReport]
 
-    Date timeReportMonth
+    Date date
     double standardTime
 
     static constraints = {

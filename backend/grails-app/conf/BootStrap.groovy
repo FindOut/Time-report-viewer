@@ -25,8 +25,8 @@ class BootStrap {
                             name: it.activity.name
                     ],
                     employee: [
-                            id: it.user.id,
-                            name: it.user.name
+                            id: it.employee.id,
+                            name: it.employee.name
                     ]
             ]
         }

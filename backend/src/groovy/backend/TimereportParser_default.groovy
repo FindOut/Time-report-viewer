@@ -10,7 +10,7 @@ import org.joda.time.DateTime
 class TimereportParser_default {
     Workbook EXCEL_FILE = null
     Boolean EXCEL_FILE_OK = false
-    Employee USER = null
+    Employee EMPLOYEE = null
 
     // The fiscal year this parser is valid for
     private List TIMEREPORT_PARSER_YEAR = [2014, 2015]
@@ -20,7 +20,7 @@ class TimereportParser_default {
     private Map DATE_CELL = [row: 2,column: 1]
     // Location of month standard time
     private Map STANDARD_TIME_CELL = [row: 0, column: 10]
-    // Location of the username for each report month
+    // Location of the employeename for each report month
     private Map USER_NAME_CELL = [row: 1,column: 10]
     // Index of the column where activity name is found
     private int INDEX_OFFER_AREA_NAME = 0
@@ -63,7 +63,7 @@ class TimereportParser_default {
         if(file){
             EXCEL_FILE = WorkbookFactory.create(file)
             FILENAME = file.getName()
-            setUser()
+            setEmployee()
             verifyTimereport()
         } else {
             println 'No file to parse'
@@ -74,7 +74,7 @@ class TimereportParser_default {
         try {
             EXCEL_FILE = WorkbookFactory.create(stream)
             FILENAME = fileName
-            setUser()
+            setEmployee()
             verifyTimereport()
         } catch (e) {
             println 'broken file: ' + fileName
@@ -91,16 +91,16 @@ class TimereportParser_default {
 
                 currentSheetDate = new DateTime(getCell(currentSheet, DATE_CELL).dateCellValue)
 
-                createUserStandardMonths()
+                createEmployeeStandardMonths()
                 parseActivityGroups()
             }
         }
     }
 
-    private void createUserStandardMonths(){
-        double userMonthStandardTime = getCell(currentSheet, [row: 0, column: 10]).numericCellValue.round(2)
+    private void createEmployeeStandardMonths(){
+        double employeeMonthStandardTime = getCell(currentSheet, [row: 0, column: 10]).numericCellValue.round(2)
 
-        MonthlyReport.findOrSaveByUserAndStandardTimeAndTimeReportMonth(USER, userMonthStandardTime, currentSheetDate.toDate())
+        MonthlyReport.findOrSaveByEmployeeAndStandardTimeAndDate(EMPLOYEE, employeeMonthStandardTime, currentSheetDate.toDate())
     }
 
     private void parseActivityGroups(){
@@ -165,10 +165,10 @@ class TimereportParser_default {
             println "Wrong parser used. Tried to parse $fileYear file with $TIMEREPORT_PARSER_YEAR parser"
         }
 
-        // Does the file contain a username?
-        if(!USER){
+        // Does the file contain a employeename?
+        if(!EMPLOYEE){
             excelFileOk = false
-            println "No username found in file: '$FILENAME'"
+            println "No employeename found in file: '$FILENAME'"
         }
 
         EXCEL_FILE_OK = excelFileOk
@@ -196,7 +196,7 @@ class TimereportParser_default {
 
     private deleteWorkday(Activity activity, Date date){
         if(activity){
-            ActivityReport.findByUserAndActivityAndDate(USER, activity, date)?.delete()
+            ActivityReport.findByEmployeeAndActivityAndDate(EMPLOYEE, activity, date)?.delete()
         }
     }
 
@@ -227,13 +227,14 @@ class TimereportParser_default {
 
     private void createAndSaveWorkday(activity, date, hours){
         ActivityReport activityReport = ActivityReport.findOrCreateWhere(
-                user: USER,
+                employee: EMPLOYEE,
                 date: date,
                 activity: activity
         )
 
         activityReport.hours = hours
         activityReport.save()
+        println activityReport.errors
     }
 
     private static Range getActivityDataRange(indexStart, daysInMonth){
@@ -244,13 +245,13 @@ class TimereportParser_default {
         date.dayOfMonth().getMaximumValue()
     }
 
-    private void setUser(){
-        String userName = getUserName()
+    private void setEmployee(){
+        String employeeName = getEmployeeName()
 
-        USER = userName ? Employee.findOrSaveWhere(name: userName) : null
+        EMPLOYEE = employeeName ? Employee.findOrSaveWhere(name: employeeName) : null
     }
 
-    private String getUserName(){
+    private String getEmployeeName(){
         String name
         // Get name from 'Namn' fields in sheet
         (1..MONTHS_IN_YEAR).each{ int sheetIndex ->
