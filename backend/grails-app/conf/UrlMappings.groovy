@@ -7,7 +7,7 @@ class UrlMappings {
             }
         }
         '/clearDB'(controller: 'page', action: 'clearDB')
-        "/api/workdays"(resources: 'workday')
+        "/api/activityReports"(resources: 'activityReport')
         "/"(controller: 'page')
 
         "500"(view:'/error')

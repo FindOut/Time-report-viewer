@@ -2,8 +2,8 @@ package backend
 
 import grails.rest.Resource
 
-@Resource(uri='/api/users')
-class User {
+@Resource(uri='/api/employees')
+class Employee {
     String name
 
     static constraints = {

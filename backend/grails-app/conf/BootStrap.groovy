@@ -1,5 +1,5 @@
 import backend.Activity
-import backend.Workday
+import backend.ActivityReport
 import grails.converters.JSON
 
 class BootStrap {
@@ -15,7 +15,7 @@ class BootStrap {
                     ]
             ]
         }
-        JSON.registerObjectMarshaller(Workday) {
+        JSON.registerObjectMarshaller(ActivityReport) {
             return [
                     id: it.id,
                     date: it.date,
@@ -24,7 +24,7 @@ class BootStrap {
                             id: it.activity.id,
                             name: it.activity.name
                     ],
-                    user: [
+                    employee: [
                             id: it.user.id,
                             name: it.user.name
                     ]

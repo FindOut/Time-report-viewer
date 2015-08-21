@@ -2,19 +2,19 @@ var React = require('react');
 
 module.exports = React.createClass({
     render: function() {
-        var renderedUsers = this.props.users.map(function (user) {
+        var renderedEmployees = this.props.employees.map(function (employee) {
             return (
                 <li>
-                    {user.name}
+                    {employee.name}
                 </li>
             )
         });
 
         return (
-            <div id="usersInSelection">
-                <h4>Users</h4>
+            <div id="employeesInSelection">
+                <h4>Employees</h4>
                 <ul>
-                    {renderedUsers}
+                    {renderedEmployees}
                 </ul>
             </div>
         )

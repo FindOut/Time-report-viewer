@@ -10,7 +10,7 @@ import org.joda.time.DateTime
 class TimereportParser_default {
     Workbook EXCEL_FILE = null
     Boolean EXCEL_FILE_OK = false
-    User USER = null
+    Employee USER = null
 
     // The fiscal year this parser is valid for
     private List TIMEREPORT_PARSER_YEAR = [2014, 2015]
@@ -100,7 +100,7 @@ class TimereportParser_default {
     private void createUserStandardMonths(){
         double userMonthStandardTime = getCell(currentSheet, [row: 0, column: 10]).numericCellValue.round(2)
 
-        UserTimeReportMonth.findOrSaveByUserAndStandardTimeAndTimeReportMonth(USER, userMonthStandardTime, currentSheetDate.toDate())
+        MonthlyReport.findOrSaveByUserAndStandardTimeAndTimeReportMonth(USER, userMonthStandardTime, currentSheetDate.toDate())
     }
 
     private void parseActivityGroups(){
@@ -136,7 +136,7 @@ class TimereportParser_default {
             def activityDataRange = getActivityDataRange(INDEX_ACTIVITY_DATA_START, getDaysInMonth(currentSheetDate))
 
             activityDataRange.eachWithIndex{ int columnNumber, index ->
-                Date workdayDate = currentSheetDate.plusDays(index).toDate()
+                Date activityReportDate = currentSheetDate.plusDays(index).toDate()
 
                 // Get activity hours from cell
                 double hours = getActivityHour(row.getCell(columnNumber))
@@ -146,10 +146,10 @@ class TimereportParser_default {
                     offerArea = (offerAreaName == null) ? findOrSaveOfferAreaByName(defaultOfferAreaNamesForDividers[dividerIndex]) : findOrSaveOfferAreaByName(offerAreaName)
                     activity = activity ? activity : findOrSaveActivityByNameAndOfferArea(activityName, offerArea)
 
-                    createAndSaveWorkday(activity, workdayDate, hours)
+                    createAndSaveWorkday(activity, activityReportDate, hours)
                 } else {
-                    // If activity hours == 0 remove the workday if one exists
-                    deleteWorkday(activity, workdayDate)
+                    // If activity hours == 0 remove the activityReport if one exists
+                    deleteWorkday(activity, activityReportDate)
                 }
             }
         }
@@ -196,7 +196,7 @@ class TimereportParser_default {
 
     private deleteWorkday(Activity activity, Date date){
         if(activity){
-            Workday.findByUserAndActivityAndDate(USER, activity, date)?.delete()
+            ActivityReport.findByUserAndActivityAndDate(USER, activity, date)?.delete()
         }
     }
 
@@ -226,14 +226,14 @@ class TimereportParser_default {
     }
 
     private void createAndSaveWorkday(activity, date, hours){
-        Workday workday = Workday.findOrCreateWhere(
+        ActivityReport activityReport = ActivityReport.findOrCreateWhere(
                 user: USER,
                 date: date,
                 activity: activity
         )
 
-        workday.hours = hours
-        workday.save()
+        activityReport.hours = hours
+        activityReport.save()
     }
 
     private static Range getActivityDataRange(indexStart, daysInMonth){
@@ -247,7 +247,7 @@ class TimereportParser_default {
     private void setUser(){
         String userName = getUserName()
 
-        USER = userName ? User.findOrSaveWhere(name: userName) : null
+        USER = userName ? Employee.findOrSaveWhere(name: userName) : null
     }
 
     private String getUserName(){

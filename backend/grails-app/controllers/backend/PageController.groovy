@@ -9,8 +9,8 @@ class PageController {
     }
 
     def clearDB(){
-        Workday.executeUpdate('delete from Workday')
-        User.executeUpdate('delete from User')
+        ActivityReport.executeUpdate('delete from ActivityReport')
+        Employee.executeUpdate('delete from Employee')
         Activity.executeUpdate('delete from Activity')
 
         render status: 200

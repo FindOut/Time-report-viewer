@@ -38,7 +38,6 @@ module.exports = React.createClass({
                 this.setStateForFilterItemData(filterItem, {});
 
                 filterItem.dataStore.listen(function(){
-                    console.log(filterItem);
                     this.setStateForFilterItemData(filterItem, {});
                 }, this);
             }

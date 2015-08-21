@@ -3,11 +3,11 @@ var React = require('react');
 module.exports = React.createClass({
     render: function() {
         var renderedActivities = this.props.activities.map(function (activity) {
-            //var activityWorkdays = _.filter(this.props.workdays, function(workday){
-            //    return workday.activity.id === activity.id;
+            //var activityActivityReports = _.filter(this.props.activityReports, function(activityReport){
+            //    return activityReport.activity.id === activity.id;
             //});
-            //var activityHours = activityWorkdays.map(function(workday){
-            //    return workday.hours
+            //var activityHours = activityActivityReports.map(function(activityReport){
+            //    return activityReport.hours
             //}).reduce(function(total, currentValue){
             //    return total + currentValue
             //});

@@ -12,10 +12,10 @@ import org.apache.poi.xssf.usermodel.XSSFFont
 @Transactional
 class ExportService {
 
-    Map getOfferAreas(workdayActivities) {
+    Map getOfferAreas(activityReportActivities) {
         Map result = [:]
 
-        workdayActivities.groupBy{
+        activityReportActivities.groupBy{
             it[0].offerArea.name
         }.collect {
             double offerAreaHours = it.value.inject(0) { sum, activityHours ->

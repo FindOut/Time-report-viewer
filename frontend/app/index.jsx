@@ -7,12 +7,12 @@ require('../app/index.scss');
 
 var ActivityStore = require('../app/stores/ActivityStore');
 var OfferAreaStore = require('../app/stores/OfferAreaStore');
-var UserStore = require('../app/stores/UserStore');
-var WorkdayStore = require('../app/stores/WorkdayStore');
+var EmployeeStore = require('../app/stores/EmployeeStore');
+var ActivityReportStore = require('../app/stores/ActivityReportStore');
 var FilterStore = require('./filter/FilterStore');
 
 var Filter = require('../app/filter/Filter.jsx');
-var WorkdayViewer = require('../app/workdayViewer/workdayViewer');
+var ActivityReportViewer = require('../app/activityReportViewer/activityReportViewer');
 var Login = require('../app/Login');
 
 var App = React.createClass({
@@ -31,7 +31,7 @@ var App = React.createClass({
         }
     },
     componentWillMount: function(){
-        FilterStore.listen(WorkdayStore.fetchWorkdays);
+        FilterStore.listen(ActivityReportStore.fetchActivityReports);
         LoginStore.listen(this.setLoggedIn);
     },
 
@@ -60,12 +60,12 @@ var App = React.createClass({
                 dataAction: 'getActivities',
                 dataStore: ActivityStore
             }, {
-                label: 'Users',
+                label: 'Employees',
                 type: 'select',
-                serverProperty: 'users',
+                serverProperty: 'employees',
                 multiple: true,
-                dataAction: 'getUsers',
-                dataStore: UserStore
+                dataAction: 'getEmployees',
+                dataStore: EmployeeStore
             }
         ];
 
@@ -75,7 +75,7 @@ var App = React.createClass({
             return (
                 <div id="pageContainer">
                     <Filter filterConfiguration={filterConfiguration}/>
-                    <WorkdayViewer/>
+                    <ActivityReportViewer/>
                 </div>
             )
         }

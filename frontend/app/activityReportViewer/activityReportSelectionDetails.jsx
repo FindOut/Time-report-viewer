@@ -4,55 +4,55 @@ var React = require('react'),
     moment = require('moment');
 
 module.exports = React.createClass({
-    getSummarizedWorkdays_days: function () {
-        var summarizedWorkdays_days = [];
+    getSummarizedActivityReports_days: function () {
+        var summarizedActivityReports_days = [];
 
-        if(this.props.workdays.length > 0){
-            var dates = _.uniq(this.props.workdays.map(function(workday){
-                return workday.date;
+        if(this.props.activityReports.length > 0){
+            var dates = _.uniq(this.props.activityReports.map(function(activityReport){
+                return activityReport.date;
             }));
             dates.sort();
 
 
-            summarizedWorkdays_days = dates.map(function(date){
-                var workdaysInDate = _.filter(this.props.workdays, function(workday){
-                    return workday.date === date;
+            summarizedActivityReports_days = dates.map(function(date){
+                var activityReportsInDate = _.filter(this.props.activityReports, function(activityReport){
+                    return activityReport.date === date;
                 });
-                var workdaysHoursInDate = workdaysInDate.map(function(workday){
-                    return workday.hours;
+                var activityReportsHoursInDate = activityReportsInDate.map(function(activityReport){
+                    return activityReport.hours;
                 }).reduce(function(total, currentValue){
                     return total + currentValue
                 });
 
                 return [
                     new Date(date).getTime(),
-                    workdaysHoursInDate
+                    activityReportsHoursInDate
                 ]
             }.bind(this));
         }
-        return summarizedWorkdays_days
+        return summarizedActivityReports_days
     },
 
-    getSummarizedWorkdays_weeks: function () {
-        var summarizedWorkdays_weeks = [];
+    getSummarizedActivityReports_weeks: function () {
+        var summarizedActivityReports_weeks = [];
 
-        if(this.props.workdays.length > 0){
+        if(this.props.activityReports.length > 0){
             var data = {};
 
-            this.props.workdays.forEach(function(workday){
-                var week = moment(workday.date).weekday(0).toDate().getTime();
+            this.props.activityReports.forEach(function(activityReport){
+                var week = moment(activityReport.date).weekday(0).toDate().getTime();
 
                 if(!data[week]){
-                    data[week] = workday.hours;
+                    data[week] = activityReport.hours;
                 } else {
-                    data[week] += workday.hours
+                    data[week] += activityReport.hours
                 }
             });
 
             var weeks = Object.keys(data);
             weeks.sort();
 
-            summarizedWorkdays_weeks = weeks.map(function(week){
+            summarizedActivityReports_weeks = weeks.map(function(week){
                 if(data[week] !== undefined){
                     return [
                         parseInt(week, 10),
@@ -66,12 +66,12 @@ module.exports = React.createClass({
                 }
             }.bind(this));
         }
-        return summarizedWorkdays_weeks
+        return summarizedActivityReports_weeks
     },
 
     render: function() {
         var start = new Date().getTime();
-        var summarizedWorkdays_days = this.getSummarizedWorkdays_weeks();
+        var summarizedActivityReports_days = this.getSummarizedActivityReports_weeks();
 
         var config = {
             chart: {
@@ -112,7 +112,7 @@ module.exports = React.createClass({
             },
             series: [
                 {
-                    data: summarizedWorkdays_days
+                    data: summarizedActivityReports_days
                 }
             ]
         };

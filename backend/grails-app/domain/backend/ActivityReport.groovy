@@ -2,10 +2,10 @@ package backend
 
 import grails.rest.Resource
 
-@Resource(uri='/api/workday')
-class Workday {
+@Resource(uri='/api/activityReports')
+class ActivityReport {
 
-    static belongsTo = [user: User]
+    static belongsTo = [user: Employee]
 
     Activity activity
     Date date

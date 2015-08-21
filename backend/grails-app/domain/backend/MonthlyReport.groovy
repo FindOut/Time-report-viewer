@@ -1,8 +1,8 @@
 package backend
 
-class UserTimeReportMonth {
+class MonthlyReport {
 
-    static belongsTo = [user: User]
+    static belongsTo = [user: Employee]
 
     Date timeReportMonth
     double standardTime

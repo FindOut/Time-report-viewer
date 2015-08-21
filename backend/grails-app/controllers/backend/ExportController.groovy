@@ -64,7 +64,7 @@ class ExportController {
             it.date
         }
 
-        double totalBudget = UserTimeReportMonth.withCriteria {
+        double totalBudget = MonthlyReport.withCriteria {
             between('timeReportMonth', startOfFiscalYear.toDate(), startOfFiscalYear.plusYears(1).minusDays(1).toDate())
 
             projections {
@@ -72,7 +72,7 @@ class ExportController {
             }
         }[0] ?: 0
 
-        List totalWorkdayActivities = Workday.withCriteria {
+        List totalWorkdayActivities = ActivityReport.withCriteria {
             between('date', startOfFiscalYear.toDate(), startOfFiscalYear.plusYears(1).minusDays(1).toDate())
 
             projections {
@@ -98,7 +98,7 @@ class ExportController {
             DateTime iteratingMonth = startOfFiscalYear.plusMonths(monthIndex)
             TimeReportMonth reportMonth = timereportMonths[monthIndex]
 
-            List workdayActivities = Workday.withCriteria {
+            List activityReportActivities = ActivityReport.withCriteria {
                 between('date', iteratingMonth.toDate(), iteratingMonth.plusMonths(1).minusDays(1).toDate())
 
                 projections {
@@ -108,14 +108,14 @@ class ExportController {
             }
 
 
-            double oh = workdayActivities.find{it[0].name == 'OH (används endast av OH personal)'}?.getAt(1) ?: 0
-            double vacation = workdayActivities.find{it[0].name == 'Semester'}?.getAt(1) ?: 0
-            double parentalLeave = workdayActivities.findAll{it[0].name.contains('Föräldrarledig')}*.getAt(1).sum() ?: 0
-            double sickness =  workdayActivities.find{it[0].name == 'Sjukdom'}?.getAt(1) ?:0
-            double vab = workdayActivities.find{it[0].name == 'VAB'}?.getAt(1)?:0
-            double skillsDevelopment = workdayActivities.find{it[0].name == 'Kompetensutveckling'}?.getAt(1)?:0
+            double oh = activityReportActivities.find{it[0].name == 'OH (används endast av OH personal)'}?.getAt(1) ?: 0
+            double vacation = activityReportActivities.find{it[0].name == 'Semester'}?.getAt(1) ?: 0
+            double parentalLeave = activityReportActivities.findAll{it[0].name.contains('Föräldrarledig')}*.getAt(1).sum() ?: 0
+            double sickness =  activityReportActivities.find{it[0].name == 'Sjukdom'}?.getAt(1) ?:0
+            double vab = activityReportActivities.find{it[0].name == 'VAB'}?.getAt(1)?:0
+            double skillsDevelopment = activityReportActivities.find{it[0].name == 'Kompetensutveckling'}?.getAt(1)?:0
 
-            double budget = UserTimeReportMonth.withCriteria {
+            double budget = MonthlyReport.withCriteria {
                 between('timeReportMonth', iteratingMonth.toDate(), iteratingMonth.plusMonths(1).minusDays(1).toDate())
 
                 projections {
@@ -123,11 +123,11 @@ class ExportController {
                 }
             }[0] ?: 0
 
-            double reportedHours = workdayActivities*.getAt(1).sum() ?: 0
+            double reportedHours = activityReportActivities*.getAt(1).sum() ?: 0
 
             double reportedHoursBudgetDiff = reportedHours - budget
 
-            Map offerAreas = exportService.getOfferAreas(workdayActivities)
+            Map offerAreas = exportService.getOfferAreas(activityReportActivities)
             List nonProductionOfferAreas = [
                     'Other FindOut time',
                     'Other time'

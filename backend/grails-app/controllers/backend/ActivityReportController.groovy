@@ -5,11 +5,11 @@ import grails.rest.RestfulController
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 
-class WorkdayController extends RestfulController{
+class ActivityReportController extends RestfulController{
     static responseFormats = ['json', 'xml']
 
-    WorkdayController(){
-        super(Workday)
+    ActivityReportController(){
+        super(ActivityReport)
     }
 
     /*
@@ -49,8 +49,8 @@ class WorkdayController extends RestfulController{
             }
         }
 
-        def criteria = Workday.createCriteria()
-        List workdays = criteria.list(params){
+        def criteria = ActivityReport.createCriteria()
+        List activityReports = criteria.list(params){
             if(fromDate){ge('date', fromDate)}
             if(toDate){le('date', toDate)}
             if(userIds){
@@ -72,7 +72,7 @@ class WorkdayController extends RestfulController{
             }
         }
 
-        respond workdays
+        respond activityReports
 
 //        respond super.listAllResources(params), model: [("${super.resourceName}Count".toString()): super.countResources()]
     }
