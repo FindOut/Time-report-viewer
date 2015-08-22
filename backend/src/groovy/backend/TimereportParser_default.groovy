@@ -63,6 +63,7 @@ class TimereportParser_default {
     private activities = Activity.list()
     private activityTypes = ActivityType.list()
     private offerAreas = OfferArea.list()
+    private Range currentActivityDataRange = null
     private DateTime currentSheetDate = null
     private Sheet currentSheet = null
     private MonthlyReport currentMonthlyReport = null
@@ -100,23 +101,23 @@ class TimereportParser_default {
             (1..MONTHS_IN_YEAR).each{ int sheetIndex ->
                 currentSheet = EXCEL_FILE.getSheetAt(sheetIndex)
                 currentSheetDate = new DateTime(getCell(currentSheet, DATE_CELL).dateCellValue)
+                currentActivityDataRange = getActivityDataRange(INDEX_ACTIVITY_DATA_START, currentSheetDate.dayOfMonth().getMaximumValue())
                 currentMonthlyReport = createEmployeeStandardMonth()
                 currentMonthlyReport.save(flush: true)
 
                 parseActivityGroups()
-                currentMonthlyReport.save()
             }
         }
     }
 
     private MonthlyReport createEmployeeStandardMonth(){
-        double employeeMonthStandardTime = getCell(currentSheet, [row: 0, column: 10]).numericCellValue.round(2)
+        double employeeMonthStandardTime = getCell(currentSheet, STANDARD_TIME_CELL).numericCellValue.round(2)
 
         MonthlyReport.findOrSaveByEmployeeAndStandardTimeAndDate(EMPLOYEE, employeeMonthStandardTime, currentSheetDate.toDate())
     }
 
     private void parseActivityGroups(){
-        List dividerIndexes = getCategoryDividersForSheet(currentSheet)
+        List dividerIndexes = getCategoryDividersForSheet()
         int lastDividerIndex = dividerIndexes.size()-1
 
         dividerIndexes.eachWithIndex{ dividerRowNumber, dividerIndex ->
@@ -125,8 +126,7 @@ class TimereportParser_default {
                 int start = dividerRowNumber as int
                 int end = dividerIndexes[dividerIndex+1] as int
 
-                String activityTypeName = dividerMapping[dividerHeaders[dividerIndex]]
-                currentActivityType = findOrSaveActivityTypeByName(activityTypeName)
+                currentActivityType = getCurrentActivityType(dividerIndex)
 
                 ((start+1)..(end-1)).each{ int rowNumber ->
                     parseRow(currentSheet.getRow(rowNumber), dividerIndex)
@@ -135,27 +135,22 @@ class TimereportParser_default {
         }
     }
 
-    private List getCategoryDividersForSheet(Sheet sheet){
-        sheet.rowIterator().findIndexValues { Row row ->
+    private getCurrentActivityType(dividerIndex){
+        findOrSaveActivityTypeByName(dividerMapping[dividerHeaders[dividerIndex]])
+    }
+
+    private List getCategoryDividersForSheet(){
+        currentSheet.rowIterator().findIndexValues { Row row ->
             getStringValue(row.getCell(1))?.trim() in dividerHeaders
         }
     }
 
     private void parseRow(Row row, int dividerIndex){
-        String activityName = getStringValue(row.getCell(INDEX_ACTIVITY_NAME))?.trim()
-        String offerAreaName = getStringValue(row.getCell(INDEX_OFFER_AREA_NAME))?.trim() ?: defaultOfferAreaNamesForDividers[dividerIndex]
-
-        OfferArea offerArea = offerAreas.find{it.name == offerAreaName}// Don't create an offer area if there's no data for it
-        Activity activity = activities.find {
-            it.name == activityName &&
-                    it.activityType == currentActivityType &&
-                    it.offerArea == offerArea
-        } // Don't create an activity if there's no data for it
+        String activityName = getStringValue(row.getCell(INDEX_ACTIVITY_NAME))
+        String offerAreaName = getStringValue(row.getCell(INDEX_OFFER_AREA_NAME)) ?: defaultOfferAreaNamesForDividers[dividerIndex]
 
         if(activityName){
-            def activityDataRange = getActivityDataRange(INDEX_ACTIVITY_DATA_START, getDaysInMonth(currentSheetDate))
-
-            activityDataRange.eachWithIndex{ int columnNumber, index ->
+            currentActivityDataRange.eachWithIndex{ int columnNumber, index ->
                 Date activityReportDate = currentSheetDate.plusDays(index).toDate()
 
                 // Get activity hours from cell
@@ -163,17 +158,10 @@ class TimereportParser_default {
 
                 if(hours > 0){
                     // Now that we have data, create an activity and offer area if we didn't have one
-                    offerArea = offerArea ?: findOrSaveOfferAreaByName(offerAreaName)
-                    activity = activity ?: findOrSaveActivity(activityName, offerArea)
+                    OfferArea offerArea = findOrSaveOfferAreaByName(offerAreaName)
+                    Activity activity = findOrSaveActivity(activityName, offerArea)
 
                     createAndSaveWorkday(activity, activityReportDate, hours)
-                } else {
-                    // If activity hours == 0 remove the activityReport if one exists
-                    ActivityReport.findWhere(
-                            employee: EMPLOYEE,
-                            activity: activity,
-                            date: activityReportDate
-                    )?.delete()
                 }
             }
         }
@@ -242,7 +230,7 @@ class TimereportParser_default {
     private findOrSaveActivity(activityName, offerArea){
         Activity activity = activities.find{it.name == activityName}
         if(!activity){
-            activity = Activity.findOrCreateWhere(
+            activity = new Activity(
                     name: activityName,
                     activityType: currentActivityType,
                     offerArea: offerArea
@@ -257,7 +245,7 @@ class TimereportParser_default {
     private ActivityType findOrSaveActivityTypeByName(String activityTypeName){
         ActivityType activityType = activityTypes.find{it.name == activityTypeName}
         if(!activityType){
-            activityType = ActivityType.findOrCreateByName(activityTypeName)
+            activityType = new ActivityType(name: activityTypeName)
             activityType.save()
             activityTypes << activityType
         }
@@ -279,10 +267,6 @@ class TimereportParser_default {
 
     private static Range getActivityDataRange(indexStart, daysInMonth){
         (indexStart..indexStart+daysInMonth-1)
-    }
-
-    private static int getDaysInMonth(DateTime date){
-        date.dayOfMonth().getMaximumValue()
     }
 
     private void setEmployee(){

@@ -8,6 +8,7 @@ import java.util.zip.ZipFile
 
 @Transactional
 class ImportDataService {
+    static transactional = false
 
     def fileService
 
@@ -22,11 +23,8 @@ class ImportDataService {
                 String fileName = entryNameParts[-1]
 
                 if(fileService.isFileTimeReport(fileName)){
-                    println 'parsing entry'
-
                     TimereportParser_default defaultParser = new TimereportParser_default(zipFile.getInputStream(entry), fileName)
                     defaultParser.parseWorkbook()
-                    println(defaultParser.EXCEL_FILE_OK)
                 }
             }
         }

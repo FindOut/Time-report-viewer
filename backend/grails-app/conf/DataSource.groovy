@@ -35,6 +35,8 @@ environments {
     }
     production {
         dataSource {
+            username = 'trapi'
+            password = 'trapi'
             dbCreate = "create" // one of 'create', 'create-drop', 'update', 'validate', ''
             dialect = org.hibernate.dialect.MySQL5InnoDBDialect
             url = "jdbc:mysql://localhost/time_report?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;Encoding=utf-8"
