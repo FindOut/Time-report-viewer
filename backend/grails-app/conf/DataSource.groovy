@@ -4,7 +4,16 @@ dataSource {
 //    driverClassName = "org.h2.Driver"
 //    username = "sa"
 //    password = ""
-
+    properties {
+        maxActive = 50
+        maxIdle = 25
+        minIdle = 5
+        initialSize = 5
+        minEvictableIdleTimeMillis = 60000
+        timeBetweenEvictionRunsMillis = 60000
+        maxWait = 10000
+        validationQuery = "SELECT 1"
+    }
     driverClassName = "com.mysql.jdbc.Driver"
 
     username = 'root'
@@ -35,33 +44,11 @@ environments {
     }
     production {
         dataSource {
-            username = 'trapi'
-            password = 'trapi'
+            username = 'b6375c83ce7351'
+            password = '66660d32'
             dbCreate = "create" // one of 'create', 'create-drop', 'update', 'validate', ''
             dialect = org.hibernate.dialect.MySQL5InnoDBDialect
-            url = "jdbc:mysql://localhost/time_report?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;Encoding=utf-8"
-//            dbCreate = "update"
-//            url = "jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
-//            properties {
-//               // See http://grails.org/doc/latest/guide/conf.html#dataSource for documentation
-//               jmxEnabled = true
-//               initialSize = 5
-//               maxActive = 50
-//               minIdle = 5
-//               maxIdle = 25
-//               maxWait = 10000
-//               maxAge = 10 * 60000
-//               timeBetweenEvictionRunsMillis = 5000
-//               minEvictableIdleTimeMillis = 60000
-//               validationQuery = "SELECT 1"
-//               validationQueryTimeout = 3
-//               validationInterval = 15000
-//               testOnBorrow = true
-//               testWhileIdle = true
-//               testOnReturn = false
-//               jdbcInterceptors = "ConnectionState"
-//               defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
-//            }
+            url = "jdbc:mysql://us-cdbr-iron-east-02.cleardb.net/heroku_268065ee841d7dc?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;Encoding=utf-8;reconnect=true"
         }
     }
 }
