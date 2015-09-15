@@ -82,8 +82,8 @@ class ExportController {
         }
 
         Map totalOfferAreas = exportService.getOfferAreas(totalWorkdayActivities)
-        double totalProductionHours = totalOfferAreas.findAll{it.key != 'Not Specified'}*.value.sum()
-        double totalReportedHours = totalWorkdayActivities*.getAt(1).sum()
+        double totalProductionHours = totalOfferAreas.findAll{it.key != 'Not Specified'}*.value.sum() ?: 0
+        double totalReportedHours = totalWorkdayActivities*.getAt(1).sum() ?: 0
         double totalVacation = totalWorkdayActivities.find{it[0].name == 'Semester'}?.getAt(1) ?: 0
         double totalParentalLeave = totalWorkdayActivities.findAll{it[0].name.contains('Föräldrarledig')}*.getAt(1).sum() ?: 0
         double totalSickness =  totalWorkdayActivities.find{it[0].name == 'Sjukdom'}?.getAt(1) ?:0

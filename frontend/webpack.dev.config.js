@@ -7,7 +7,7 @@ module.exports = {
     entry: [
         'webpack-dev-server/client?http://localhost:3001',
         'webpack/hot/dev-server',
-        './app/index'
+        './source/index'
     ],
 
     output: {
@@ -39,7 +39,14 @@ module.exports = {
             { test: /\.scss$/, loaders: ['style', 'css', 'autoprefixer-loader?browsers=last 2 version', 'sass']},
             { test: /\.jsx$/, loaders: ['react-hot', 'jsx'] },
             { test: /\.yaml$/, loaders: ['json', 'yaml'] },
-            { test: /\.(ttf|eot|svg|woff).*$/, loaders: ['file']}
+            { test: /\.(ttf|eot|svg|woff).*$/, loaders: ['file']},
+            {
+                test: /\.(jpe?g|png|gif|svg)$/i,
+                loaders: [
+                    'file?hash=sha512&digest=hex&name=[hash].[ext]',
+                    'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false'
+                ]
+            }
         ]
 
     }

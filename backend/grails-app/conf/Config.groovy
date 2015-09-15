@@ -3,11 +3,14 @@
 // in the classpath in ConfigSlurper format
 
 grails.config.locations = ["classpath:${appName}-config.groovy",
-                           "file:./${appName}-config.groovy"]
+                           "file:./${appName}-config.groovy",
+                           "file:./time-report-viewer-config.groovy",
+                           "file:${userHome}/.grails/time-report-viewer-config.groovy"]
 //if (System.properties["${appName}.config"]) {
 //    grails.config.locations << "file:" + System.properties["${appName}.config"]
 //}
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
+grails.userHome = userHome
 
 // The ACCEPT header will not be used for content negotiation for user agents containing the following strings (defaults to the 4 major rendering engines)
 grails.mime.disable.accept.header.userAgents = ['Gecko', 'WebKit', 'Presto', 'Trident']

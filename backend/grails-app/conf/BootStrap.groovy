@@ -1,10 +1,16 @@
 import backend.Activity
 import backend.ActivityReport
 import grails.converters.JSON
+import grails.util.Holders
 
 class BootStrap {
 
     def init = { servletContext ->
+        println "###"*40
+        println "###"*40
+        println Holders.config.dropbox.time_report.folder.url
+        println "###"*40
+        println "###"*40
         JSON.registerObjectMarshaller(Activity) {
             return [
                     id: it.id,

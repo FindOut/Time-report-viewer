@@ -3,7 +3,7 @@ var webpack = require('webpack');
 module.exports = {
 
     entry: [
-        './app'
+        './source'
     ],
 
     output: {
@@ -23,6 +23,7 @@ module.exports = {
 
     module: {
         loaders: [
+            { test: /\.png/, loader: 'url-loader?limit=100000&mimetype=image/png' },
             { test: /\.css$/, loaders: ['style', 'css'] },
             { test: /\.scss$/, loaders: ['style', 'css', 'autoprefixer-loader?browsers=last 2 version', 'sass']},
             { test: /\.jsx$/, loaders: ['react-hot', 'jsx'] },

@@ -32,11 +32,12 @@
             $(document).on("click", ".addFile", addFile);
         </script>
 	<body>
-    <div>
-        <g:link controller="importData" action="importDataFromDropbox"><h2>Import from Dropbox</h2></g:link>
+    %{--<div>--}%
+        %{--<g:link controller="importData" action="importDataFromDropbox"><h2>Import from Dropbox</h2></g:link>--}%
 
-        <g:link class="addFile" controller="importData" action="importData">Load Excel file</g:link>
-        <input id="triggerFileBrowse" style="display: none"/>%{--workaround for triggering plupload filebrowse--}%
-    </div>
+        %{--<g:link class="addFile" controller="importData" action="importData">Load Excel file</g:link>--}%
+        %{--<input id="triggerFileBrowse" style="display: none"/>--}%%{--workaround for triggering plupload filebrowse--}%
+    %{--</div>--}%
+        <div>app is running</div>
 	</body>
 </html>

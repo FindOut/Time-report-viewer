@@ -1,4 +1,4 @@
-grails.servlet.version = "3.0" // Change depending on target container compliance (2.5 or 3.0)
+grails.servlet.version = "2.5" // Change depending on target container compliance (2.5 or 3.0)
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
@@ -52,14 +52,14 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
          runtime 'mysql:mysql-connector-java:5.1.29'
         // runtime 'org.postgresql:postgresql:9.3-1101-jdbc41'
-        test "org.grails:grails-datastore-test-support:1.0-grails-2.4"
+//        test "org.grails:grails-datastore-test-support:1.0-grails-2.4"
     }
 
     plugins {
         build ":tomcat:7.0.54"
 
         // plugins for the compile step
-        compile ':spring-security-core:2.0-RC4'
+        compile ':spring-security-core:2.0-RC3'
         compile ':spring-security-rest:1.5.0.RC1', {
             excludes: 'spring-security-core'
         }

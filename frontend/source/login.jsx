@@ -1,6 +1,6 @@
-require('../app/login.scss');
+require('../source/login.scss');
 var React = require('react');
-var LoginStore = require('../app/stores/LoginStore');
+var LoginStore = require('../source/stores/LoginStore');
 
 module.exports = React.createClass({
     username: '',

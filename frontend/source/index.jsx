@@ -1,19 +1,20 @@
 'use strict';
 var React = require('react');
 var Reflux = require('reflux');
-var LoginStore = require('../app/stores/LoginStore');
+var LoginStore = require('../source/stores/LoginStore');
 
-require('../app/index.scss');
+require('../source/index.scss');
 
-var ActivityStore = require('../app/stores/ActivityStore');
-var OfferAreaStore = require('../app/stores/OfferAreaStore');
-var EmployeeStore = require('../app/stores/EmployeeStore');
-var ActivityReportStore = require('../app/stores/ActivityReportStore');
+var ActivityStore = require('../source/stores/ActivityStore');
+var OfferAreaStore = require('../source/stores/OfferAreaStore');
+var EmployeeStore = require('../source/stores/EmployeeStore');
+var ActivityReportStore = require('../source/stores/ActivityReportStore');
 var FilterStore = require('./filter/FilterStore');
 
-var Filter = require('../app/filter/Filter.jsx');
-var ActivityReportViewer = require('../app/activityReportViewer/activityReportViewer');
-var Login = require('../app/Login');
+var Menu = require('../source/menu/menuButton.jsx');
+var Filter = require('../source/filter/Filter.jsx');
+var ActivityReportViewer = require('../source/activityReportViewer/activityReportViewer');
+var Login = require('../source/Login');
 
 var App = React.createClass({
     getInitialState: function () {
@@ -69,15 +70,25 @@ var App = React.createClass({
             }
         ];
 
+        var menuConfiguration = {
+            items: [
+                {text: 'Import data from dropbox', url: '/import/importDataFromDropbox'},
+                {text: 'Upload timereport', url: 'https://...'},
+                {text: 'Export profitability basis', url: "/export/profitabilityBasis"}
+            ]
+        };
+
+
         if(!LoginStore.isAuthorized()){
             return (<Login></Login>);
         } else {
             return (
                 <div id="pageContainer">
+                    <Menu {...menuConfiguration}/>
                     <Filter filterConfiguration={filterConfiguration}/>
                     <ActivityReportViewer/>
                 </div>
-            )
+            );
         }
     }
 });

@@ -7,7 +7,8 @@ import java.util.zip.ZipFile
 @Transactional
 class FileService {
     ZipFile downloadZipFromUrl(String url){
-        new File("temp/TimeReports.zip").withOutputStream { out ->
+        File file = new File("TimeReports.zip")
+        file.withOutputStream { out ->
             try {
                 new URL(url).withInputStream { from ->  out << from; }
             } catch (e) {
@@ -16,7 +17,7 @@ class FileService {
             }
         }.close()
 
-        new ZipFile(new File('temp/TimeReports.zip'))
+        new ZipFile(new File('TimeReports.zip'))
     }
 
     static Boolean isFileTimeReport(String fileName){

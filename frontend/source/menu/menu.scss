@@ -1,0 +1,28 @@
+#menu {
+  position:absolute;
+  width: 34px;
+  height: 34px;
+  top:5px;
+  left: 5px;
+  cursor: pointer;
+  background-image: url(menu.png);
+  .list {
+    position: absolute;
+
+
+    margin-top: 10px;
+    margin-left: 10px;
+    //visibility: hidden;
+    //border: solid black 1px
+  }
+  .listItem {
+    display: inline-block;
+    padding: 2px;
+    border: solid black 1px;
+    width: 150px;
+    background-color: #FAFAFA;
+    &:hover {
+      transform: scale(1.1, 1.1) translateX(4%);
+    }
+  }
+}

@@ -33,7 +33,7 @@ environments {
         dataSource {
             dbCreate = "create" // one of 'create', 'create-drop', 'update', 'validate', ''
             dialect = org.hibernate.dialect.MySQL5InnoDBDialect
-            url = "jdbc:mysql://localhost/time_report?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;Encoding=utf-8"
+            url = "jdbc:mysql://localhost/time_report_viewer?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;Encoding=utf-8"
         }
     }
     test {
@@ -44,11 +44,17 @@ environments {
     }
     production {
         dataSource {
-            username = 'b6375c83ce7351'
-            password = '66660d32'
+            username = 'timeReportViewer'
+            password = 'trapi'
             dbCreate = "create" // one of 'create', 'create-drop', 'update', 'validate', ''
             dialect = org.hibernate.dialect.MySQL5InnoDBDialect
-            url = "jdbc:mysql://us-cdbr-iron-east-02.cleardb.net/heroku_268065ee841d7dc?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;Encoding=utf-8;reconnect=true"
+            url = "jdbc:mysql://localhost/time_report_viewer?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;Encoding=utf-8"
+            // For heroku
+//            username = 'b6375c83ce7351'
+//            password = '66660d32'
+//            dbCreate = "create" // one of 'create', 'create-drop', 'update', 'validate', ''
+//            dialect = org.hibernate.dialect.MySQL5InnoDBDialect
+//            url = "jdbc:mysql://us-cdbr-iron-east-02.cleardb.net/heroku_268065ee841d7dc?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;Encoding=utf-8;reconnect=true"
         }
     }
 }
