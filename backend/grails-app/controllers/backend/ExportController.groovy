@@ -184,11 +184,20 @@ class ExportController {
         sheet.getRow(26).getCell(2).setCellValue(totalParentalLeave)
 
 
+        new File()
 
-        response.setHeader("Content-disposition", /attachment; filename=input till lonsamhetsmodell.xlsx/)
-        response.contentType = 'application/excel'
-        excelFile.write(response.outputStream)
-        response.outputStream.flush()
-        response.outputStream.close()
+        response.setHeader("Content-disposition", "attachment; filename=\"input till lonsamhetsmodell.xlsx\"")
+        response.setHeader("Content-Transfer-Encoding", 'binary')
+//        response.contentType = 'application/excel'
+
+
+        excelFile.properties.each{println it}
+
+
+        render(contentType: "application/excel", text: excelFile);
+//        excelFile.write(response.outputStream)
+//
+//        response.outputStream.flush()
+//        response.outputStream.close()
     }
 }

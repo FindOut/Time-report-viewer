@@ -15,23 +15,20 @@ module.exports = {
     },
     download: function(uri){
         console.log(uri);
-        var xmlhttp =new XMLHttpRequest();
-        xmlhttp.open("GET", AppConfig.serverURL + '/login');
-        xmlhttp.setRequestHeader('x-auth-token', AppConfig.accessToken.access_token);
-        //xmlhttp.contentDisposition = 'attachment';
-        xmlhttp.send();
-        //$.ajax({
-        //    url: AppConfig.serverURL + uri,
-        //    crossDomain: true,
-        //    headers : {
-        //        'x-auth-token' : AppConfig.accessToken.access_token
-        //    },
-        //    success: function(response)
-        //    {
-        //        console.log('got responce');
-        //        window.open(response);
-        //    }
-        //});
+        //var xmlhttp =new XMLHttpRequest();
+        //xmlhttp.open("GET", AppConfig.serverURL + '/login');
+        //xmlhttp.setRequestHeader('x-auth-token', AppConfig.accessToken.access_token);
+        ////xmlhttp.contentDisposition = 'attachment';
+        //xmlhttp.send();
+        $.ajax({
+            type: 'POST',
+            url: AppConfig.serverURL + uri,
+            crossDomain: true,
+            headers : {
+                'x-auth-token' : AppConfig.accessToken.access_token
+            }
+
+        });
     },
     login: function(credentials, statusCodeCallbacks){
         $.ajax({

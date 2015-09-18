@@ -6,7 +6,7 @@ module.exports = React.createClass({
     itemClick: function(event){
         event.preventDefault();
 
-        DBService.get(this.props.url);
+        DBService.download(this.props.url);
     },
     render: function(){
         return (
