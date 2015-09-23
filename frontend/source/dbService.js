@@ -14,21 +14,36 @@ module.exports = {
         }.bind(this));
     },
     download: function(uri){
-        console.log(uri);
-        //var xmlhttp =new XMLHttpRequest();
-        //xmlhttp.open("GET", AppConfig.serverURL + '/login');
-        //xmlhttp.setRequestHeader('x-auth-token', AppConfig.accessToken.access_token);
-        ////xmlhttp.contentDisposition = 'attachment';
-        //xmlhttp.send();
-        $.ajax({
-            type: 'POST',
-            url: AppConfig.serverURL + uri,
-            crossDomain: true,
-            headers : {
-                'x-auth-token' : AppConfig.accessToken.access_token
-            }
 
-        });
+        var createObjectURL = function (file) {
+                if (window.webkitURL) {
+                    return window.webkitURL.createObjectURL(file);
+                } else if (window.URL && window.URL.createObjectURL) {
+                    return window.URL.createObjectURL(file);
+                } else {
+                    return null;
+                }
+            },
+            xhr = new XMLHttpRequest();
+        xhr.open('GET', AppConfig.serverURL + uri, true);
+        xhr.setRequestHeader('x-auth-token', AppConfig.accessToken.access_token);
+        xhr.responseType = 'blob';
+
+        xhr.onload = function (e) {
+            if (this.status == 200) {
+                var url = createObjectURL(new Blob([this.response], {
+                    type: 'application/vnd.ms-excel'
+                }));
+                var link = document.createElement('A');
+                link.setAttribute('href', url);
+                link.setAttribute('Download', 'profitability_basis.xlsx');
+                link.appendChild(document.createTextNode('Download'));
+                link.click();
+                //document.getElementsByTagName('body')[0].prependChild(link);
+
+            }
+        };
+        xhr.send();
     },
     login: function(credentials, statusCodeCallbacks){
         $.ajax({

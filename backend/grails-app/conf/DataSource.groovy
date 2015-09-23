@@ -12,6 +12,7 @@ dataSource {
         minEvictableIdleTimeMillis = 60000
         timeBetweenEvictionRunsMillis = 60000
         maxWait = 10000
+        testWhileIdle=true
         validationQuery = "SELECT 1"
     }
     driverClassName = "com.mysql.jdbc.Driver"
@@ -46,7 +47,7 @@ environments {
         dataSource {
             username = 'timeReportViewer'
             password = 'trapi'
-            dbCreate = "create" // one of 'create', 'create-drop', 'update', 'validate', ''
+            dbCreate = "update" // one of 'create', 'create-drop', 'update', 'validate', ''
             dialect = org.hibernate.dialect.MySQL5InnoDBDialect
             url = "jdbc:mysql://localhost/time_report_viewer?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;Encoding=utf-8"
             // For heroku

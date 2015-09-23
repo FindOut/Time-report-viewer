@@ -73,7 +73,6 @@ var App = React.createClass({
         var menuConfiguration = {
             items: [
                 {text: 'Import data from dropbox', url: '/import/importDataFromDropbox'},
-                {text: 'Upload timereport', url: 'https://...'},
                 {text: 'Export profitability basis', url: "/export/profitabilityBasis"}
             ]
         };

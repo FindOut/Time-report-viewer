@@ -2,9 +2,10 @@ var webpack = require('webpack');
 
 module.exports = {
 
-    entry: [
-        './source'
-    ],
+    entry: {
+        app: "./source",
+        plugins: ['react','reflux','lodash','react-highcharts','moment']
+    },
 
     output: {
         path: __dirname + '/app/',
@@ -14,7 +15,8 @@ module.exports = {
 
     plugins: [
         new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.UglifyJsPlugin({minimize: true})
+        new webpack.optimize.UglifyJsPlugin({minimize: true}),
+        new webpack.optimize.CommonsChunkPlugin(/* chunkName= */"plugins", /* filename= */"plugins.bundle.js")
     ],
 
     resolve: {

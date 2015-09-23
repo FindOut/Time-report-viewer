@@ -8,7 +8,7 @@ var url = require('url');
 
 /* Proxy */
 var app = express();
-app.use('/app', proxy(url.parse('http://localhost:3001/app')));
+app.use('/', proxy(url.parse('http://localhost:3001/app')));
 
 app.get('/*', function(req, res) {
     res.sendFile(__dirname + '/app/index.html');

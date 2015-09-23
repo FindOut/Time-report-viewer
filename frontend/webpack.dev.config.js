@@ -4,11 +4,11 @@ var path = require('path');
 module.exports = {
     devtool: 'inline-source-map',
 
-    entry: [
-        'webpack-dev-server/client?http://localhost:3001',
-        'webpack/hot/dev-server',
-        './source/index'
-    ],
+    entry: {
+        app: ['webpack-dev-server/client?http://localhost:3001', 'webpack/hot/dev-server', './source/index'],
+        plugins: ['react','reflux','lodash','react-highcharts','moment']
+    },
+
 
     output: {
         path: path.join(__dirname, '/app/'),
@@ -18,8 +18,8 @@ module.exports = {
 
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
+        new webpack.optimize.CommonsChunkPlugin(/* chunkName= */"plugins", /* filename= */"plugins.bundle.js")
     ],
-
     resolve: {
         extensions: ['', '.js', '.jsx']
     },
