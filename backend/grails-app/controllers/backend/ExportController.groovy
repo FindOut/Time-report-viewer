@@ -22,6 +22,11 @@ class ExportController {
                 'Not Specified': 'Ej specificerat'
         ]
 
+        List nonProductionOfferAreas = [
+                'Other FindOut time',
+                'Other time'
+        ]
+
         Workbook excelFile = new XSSFWorkbook()
         excelFile.createSheet('Utfall timmar intäkter')
 
@@ -82,15 +87,15 @@ class ExportController {
         }
 
         Map totalOfferAreas = exportService.getOfferAreas(totalWorkdayActivities)
-        double totalProductionHours = totalOfferAreas.findAll{it.key != 'Not Specified'}*.value.sum() ?: 0
+        double totalProductionHours = totalOfferAreas.findAll{!(it.key in nonProductionOfferAreas)}*.value.sum() ?: 0
         double totalReportedHours = totalWorkdayActivities*.getAt(1).sum() ?: 0
         double totalVacation = totalWorkdayActivities.find{it[0].name == 'Semester'}?.getAt(1) ?: 0
         double totalParentalLeave = totalWorkdayActivities.findAll{it[0].name.contains('Föräldrarledig')}*.getAt(1).sum() ?: 0
         double totalSickness =  totalWorkdayActivities.find{it[0].name == 'Sjukdom'}?.getAt(1) ?:0
         double totalVab = totalWorkdayActivities.find{it[0].name == 'VAB'}?.getAt(1)?:0
         double totalSkillsDevelopment = totalWorkdayActivities.find{it[0].name == 'Kompetensutveckling'}?.getAt(1)?:0
-
-
+        double totalOtherFindOutTime = totalWorkdayActivities.find{it.name == 'Other FindOut time'}?.getAt(1)?:0
+        double totalOH = totalWorkdayActivities.find{it.name == 'OH (används endast av OH personal)'}?.getAt(1)?:0
 
 
         // gets monthly data for offerAreas and activities
@@ -128,10 +133,7 @@ class ExportController {
             double reportedHoursBudgetDiff = reportedHours - budget
 
             Map offerAreas = exportService.getOfferAreas(activityReportActivities)
-            List nonProductionOfferAreas = [
-                    'Other FindOut time',
-                    'Other time'
-            ]
+
             double productionHours = offerAreas.findAll{!(it.key in nonProductionOfferAreas)}*.value?.sum() ?: 0
             double otherFindOutTime = offerAreas.findAll{it.key == 'Other FindOut time'}*.value?.sum() ?: 0
 
@@ -176,6 +178,8 @@ class ExportController {
             sheet.getRow(12+index).getCell(2).setCellValue(totalOfferAreas[offerArea.key] ?: 0)
         }
 
+        sheet.getRow(19).getCell(2).setCellValue(totalOtherFindOutTime)
+        sheet.getRow(20).getCell(2).setCellValue(totalOH)
         sheet.getRow(22).getCell(2).setCellValue(totalSkillsDevelopment)
 
         sheet.getRow(23).getCell(2).setCellValue(totalSickness + totalVab + totalVacation + totalParentalLeave)
