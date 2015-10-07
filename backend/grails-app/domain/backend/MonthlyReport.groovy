@@ -8,6 +8,11 @@ class MonthlyReport {
     Date date
     double standardTime
 
+    static mapping = {
+        employee index: 'monthly_report_employee_idx'
+        activityReports index: 'monthly_report_activityReports_idx'
+    }
+
     static constraints = {
     }
 }

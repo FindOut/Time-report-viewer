@@ -87,16 +87,17 @@ class ExportController {
         }
 
         Map totalOfferAreas = exportService.getOfferAreas(totalWorkdayActivities)
+
         double totalProductionHours = totalOfferAreas.findAll{!(it.key in nonProductionOfferAreas)}*.value.sum() ?: 0
+        double totalOtherFindOutTime = totalOfferAreas.find{it.key == 'Other FindOut time'}*.value.sum()?:0
+
         double totalReportedHours = totalWorkdayActivities*.getAt(1).sum() ?: 0
         double totalVacation = totalWorkdayActivities.find{it[0].name == 'Semester'}?.getAt(1) ?: 0
         double totalParentalLeave = totalWorkdayActivities.findAll{it[0].name.contains('Föräldrarledig')}*.getAt(1).sum() ?: 0
         double totalSickness =  totalWorkdayActivities.find{it[0].name == 'Sjukdom'}?.getAt(1) ?:0
         double totalVab = totalWorkdayActivities.find{it[0].name == 'VAB'}?.getAt(1)?:0
         double totalSkillsDevelopment = totalWorkdayActivities.find{it[0].name == 'Kompetensutveckling'}?.getAt(1)?:0
-        double totalOtherFindOutTime = totalWorkdayActivities.find{it.name == 'Other FindOut time'}?.getAt(1)?:0
-        double totalOH = totalWorkdayActivities.find{it.name == 'OH (används endast av OH personal)'}?.getAt(1)?:0
-
+        double totalOH = totalWorkdayActivities.find{it[0].name == 'OH (används endast av OH personal)'}?.getAt(1)?:0
 
         // gets monthly data for offerAreas and activities
         12.times { monthIndex ->

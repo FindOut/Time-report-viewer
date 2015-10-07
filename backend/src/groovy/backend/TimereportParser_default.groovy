@@ -194,9 +194,18 @@ class TimereportParser_default {
             Cell monthStandardTimeCell = getCell(myDashboard, [row: 5, column: (1+timeReportMonthIndex)])
 
             if(monthStandardTimeCell.cellType == FORMULA_TYPE){
-                int standardTime = monthStandardTimeCell.cellFormula.split('\\*')[1].toInteger()
+                println employeeName
+                // values like F5*176-13*4 screws this up
+                List formulaParts = monthStandardTimeCell.cellFormula.split('\\*')
 
-                TimeReportMonth.findOrSaveByDateAndStandardTime(FirstSheetDate.plusMonths(timeReportMonthIndex).toDate(), standardTime)
+                try {
+                    int standardTime = formulaParts[1].toInteger()
+
+                    TimeReportMonth.findOrSaveByDateAndStandardTime(FirstSheetDate.plusMonths(timeReportMonthIndex).toDate(), standardTime)
+                } catch(e) {
+                    println "Bad standard time formula for user $employeeName at monthindex $timeReportMonthIndex. Got parts $formulaParts"
+                }
+
             }
         }
     }
