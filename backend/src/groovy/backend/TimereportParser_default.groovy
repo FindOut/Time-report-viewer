@@ -194,7 +194,6 @@ class TimereportParser_default {
             Cell monthStandardTimeCell = getCell(myDashboard, [row: 5, column: (1+timeReportMonthIndex)])
 
             if(monthStandardTimeCell.cellType == FORMULA_TYPE){
-                println employeeName
                 // values like F5*176-13*4 screws this up
                 List formulaParts = monthStandardTimeCell.cellFormula.split('\\*')
 
