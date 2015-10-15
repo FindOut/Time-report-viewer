@@ -19,7 +19,7 @@ class ImportDataService {
         zipFile.entries().each { ZipEntry entry ->
             List entryNameParts = entry.name.split('/')
 
-            if(entryNameParts.size() > 1 && !entry.name.contains('MACOSX')){
+            if(entryNameParts.size() > 1 && !entry.name.contains('MACOSX') && !entry.name.contains('conflicted')){
                 String fileName = entryNameParts[-1]
 
                 if(fileService.isFileTimeReport(fileName)){
