@@ -236,7 +236,7 @@ class TimereportParser_default {
     }
 
     private findOrSaveActivity(activityName, offerArea){
-        Activity activity = activities.find{it.name == activityName}
+        Activity activity = activities.find{it.name == activityName && it.offerArea.id == offerArea.id}
         if(!activity){
             activity = new Activity(
                     name: activityName,

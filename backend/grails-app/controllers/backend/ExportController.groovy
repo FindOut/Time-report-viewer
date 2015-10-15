@@ -88,7 +88,7 @@ class ExportController {
 
         Map totalOfferAreas = exportService.getOfferAreas(totalWorkdayActivities)
 
-        double totalProductionHours = totalOfferAreas.findAll{!(it.key in nonProductionOfferAreas)}*.value.sum() ?: 0
+        double totalProductionHours = totalOfferAreas.findAll{!(it.key in nonProductionOfferAreas)}*.value.sum() ?: 0 // ska endast vara EO timmar
         double totalOtherFindOutTime = totalOfferAreas.find{it.key == 'Other FindOut time'}*.value?.sum()?:0
 
         double totalReportedHours = totalWorkdayActivities*.getAt(1).sum() ?: 0
@@ -96,8 +96,11 @@ class ExportController {
         double totalParentalLeave = totalWorkdayActivities.findAll{it[0].name.contains('Föräldrarledig')}*.getAt(1).sum() ?: 0
         double totalSickness =  totalWorkdayActivities.find{it[0].name == 'Sjukdom'}?.getAt(1) ?:0
         double totalVab = totalWorkdayActivities.find{it[0].name == 'VAB'}?.getAt(1)?:0
-        double totalSkillsDevelopment = totalWorkdayActivities.find{it[0].name.contains('Kompetensutveckling')}?.getAt(1)?:0
+        double totalSkillsDevelopment = totalWorkdayActivities.findAll{it[0].name.contains('Kompetensutveckling')}*.getAt(1).sum() ?:0
         double totalOH = totalWorkdayActivities.find{it[0].name == 'OH (används endast av OH personal)'}?.getAt(1)?:0
+
+        double totalProductionCapacity = (totalOfferAreas.find{it.key != 'Other time'}*.value.sum() ?: 0) - totalOH
+
 
         // gets monthly data for offerAreas and activities
         12.times { monthIndex ->
@@ -120,7 +123,7 @@ class ExportController {
             double parentalLeave = activityReportActivities.findAll{it[0].name.contains('Föräldrarledig')}*.getAt(1).sum() ?: 0
             double sickness =  activityReportActivities.find{it[0].name == 'Sjukdom'}?.getAt(1) ?:0
             double vab = activityReportActivities.find{it[0].name == 'VAB'}?.getAt(1)?:0
-            double skillsDevelopment = activityReportActivities.find{it[0].name == 'Kompetensutveckling'}?.getAt(1)?:0
+            double skillsDevelopment = activityReportActivities.findAll{it[0].name.contains('Kompetensutveckling')}*.getAt(1).sum() ?:0
 
             double budget = MonthlyReport.withCriteria {
                 between('date', iteratingMonth.toDate(), iteratingMonth.plusMonths(1).minusDays(1).toDate())
@@ -136,6 +139,7 @@ class ExportController {
 
 
             double productionHours = offerAreas.findAll{!(it.key in nonProductionOfferAreas)}*.value?.sum() ?: 0
+            double productionCapacity = (offerAreas.findAll{it.key != 'Other time'}*.value?.sum() ?: 0) - oh
             double otherFindOutTime = offerAreas.findAll{it.key == 'Other FindOut time'}*.value?.sum() ?: 0
 
 
@@ -149,6 +153,7 @@ class ExportController {
 
             sheet.getRow(8).getCell(3+monthIndex).setCellValue(reportedHours)
 
+            sheet.getRow(9).getCell(3+monthIndex).setCellValue(productionCapacity)
             sheet.getRow(10).getCell(3+monthIndex).setCellValue(productionHours)
 
             offerAreaMapping.eachWithIndex{ offerArea, index ->
@@ -177,11 +182,16 @@ class ExportController {
         sheet.getRow(5).getCell(2).setCellValue(totalReportedHours)
 
         sheet.getRow(8).getCell(2).setCellValue(totalReportedHours)
-
+        sheet.getRow(9).getCell(2).setCellValue(totalProductionCapacity)
         sheet.getRow(10).getCell(2).setCellValue(totalProductionHours)
 
         offerAreaMapping.eachWithIndex{ offerArea, index ->
-            sheet.getRow(12+index).getCell(2).setCellValue(totalOfferAreas[offerArea.key] ?: 0)
+            double totalOfferAreaSum = offerArea.value.inject(0){ double sum, String offerAreaName ->
+                sum += totalOfferAreas[offerAreaName] ?: 0
+                sum
+            }
+
+            sheet.getRow(12+index).getCell(2).setCellValue(totalOfferAreaSum)
         }
 
         sheet.getRow(19).getCell(2).setCellValue(totalOtherFindOutTime)
