@@ -29,6 +29,7 @@ class PageController {
                 sqlBatch.addBatch("Truncate table $tableName")
             }
 
+            sqlBatch.addBatch("Truncate table monthly_report_activity_report")
             sqlBatch.addBatch("SET FOREIGN_KEY_CHECKS=1")
         }
 

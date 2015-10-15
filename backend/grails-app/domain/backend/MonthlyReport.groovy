@@ -10,7 +10,7 @@ class MonthlyReport {
 
     static mapping = {
         employee index: 'monthly_report_employee_idx'
-        activityReports index: 'monthly_report_activityReports_idx'
+        activityReports index: 'monthly_report_activity_reports_idx'
     }
 
     static constraints = {
