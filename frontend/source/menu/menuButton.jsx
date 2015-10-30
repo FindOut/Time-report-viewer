@@ -4,6 +4,7 @@ require("image!./menu.png");
 require('./menu.scss');
 
 var MenuItem = require("./parts/menuItem");
+var MenuItemUL = require("./parts/menuItemWithUpload");
 
 module.exports = React.createClass({
     getInitialState: function(){
@@ -17,6 +18,9 @@ module.exports = React.createClass({
         var menuItems = this.props.items.map(function(item){
             return (<MenuItem {...item}/>)
         });
+        menuItems.push(
+            (<MenuItemUL/>)
+        );
 
         return (<div id="menu" onClick={this.toggleMenu}>
             <div className="list" style={{visibility: this.state.visibility}}>

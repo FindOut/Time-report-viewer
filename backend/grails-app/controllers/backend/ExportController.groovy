@@ -1,14 +1,90 @@
 package backend
 
+import grails.plugin.springsecurity.annotation.Secured
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.joda.time.DateTime
+import org.springframework.web.multipart.MultipartRequest
+import org.springframework.web.multipart.commons.CommonsMultipartFile
 
 class ExportController {
 
     def exportService
 
+    @Secured(['IS_AUTHENTICATED_FULLY'])
+    def profitabilityDashboard(){
+        MultipartRequest multipartRequest =  request as MultipartRequest
+        CommonsMultipartFile file = multipartRequest.getFile('file')
+
+        Workbook excelFile = new XSSFWorkbook(file.getInputStream())
+        Sheet sheet = excelFile.getSheetAt(2)
+
+        Map offerAreaMapping = [
+                'D - Produktutveckling': ['Prod'],
+                'D - Processutveckling': ['Proc'],
+                'D - Verktygsutveckling': ['VU'],
+                'I - Produktutveckling': ['Prod-I'],
+                'I - Processutveckling': ['Proc-I'],
+                'I - Verktygsutveckling': ['VU-?','VU-INV','VU-SPEK','VU-PINV'],
+                'Ej specificerat': ['Not Specified']
+        ]
+
+        DateTime startOfFiscalYear = new DateTime().withTimeAtStartOfDay().withDayOfMonth(1).withMonthOfYear(5)
+
+        12.times { monthIndex ->
+            DateTime iteratingMonth = startOfFiscalYear.plusMonths(monthIndex)
+
+            List activityReportActivities = ActivityReport.withCriteria {
+                between('date', iteratingMonth.toDate(), iteratingMonth.plusMonths(1).minusDays(1).toDate())
+
+                projections {
+                    groupProperty('activity')
+                    sum('hours')
+                }
+            }
+
+            Map offerAreas = exportService.getOfferAreas(activityReportActivities)
+
+            double oh = activityReportActivities.find{it[0].name == 'OH (används endast av OH personal)'}?.getAt(1) ?: 0
+            double vacation = activityReportActivities.find{it[0].name == 'Semester'}?.getAt(1) ?: 0
+            double parentalLeave = activityReportActivities.findAll{it[0].name.contains('Föräldrarledig')}*.getAt(1).sum() ?: 0
+            double sickness =  activityReportActivities.find{it[0].name == 'Sjukdom'}?.getAt(1) ?:0
+            double vab = activityReportActivities.find{it[0].name == 'VAB'}?.getAt(1)?:0
+
+            double vuInv = offerAreas.findAll{ it.key in offerAreaMapping['I - Verktygsutveckling']}*.value.sum() ?: 0
+            double vu = offerAreas.findAll{ it.key in offerAreaMapping['D - Verktygsutveckling']}*.value.sum() ?: 0
+            double procInv = offerAreas.findAll{ it.key in offerAreaMapping['I - Processutveckling']}*.value.sum() ?: 0
+            double proc = offerAreas.findAll{ it.key in offerAreaMapping['D - Processutveckling']}*.value.sum() ?: 0
+
+            double reportedHours = activityReportActivities*.getAt(1).sum() ?: 0
+
+
+            // write monthly data to excel
+
+            sheet.getRow(23).getCell(3+monthIndex).setCellValue(reportedHours)
+            sheet.getRow(24).getCell(3+monthIndex).setCellValue(parentalLeave)
+            sheet.getRow(26).getCell(3+monthIndex).setCellValue(vacation)
+            sheet.getRow(27).getCell(3+monthIndex).setCellValue(sickness + vab)
+
+            sheet.getRow(96).getCell(3+monthIndex).setCellValue(oh)
+
+            sheet.getRow(20).getCell(53+monthIndex).setCellValue(vuInv)
+            sheet.getRow(22).getCell(53+monthIndex).setCellValue(vu)
+
+            sheet.getRow(41).getCell(53+monthIndex).setCellValue(procInv)
+            sheet.getRow(43).getCell(53+monthIndex).setCellValue(proc)
+
+            sheet.getRow(65).getCell(53+monthIndex).setCellValue(procInv)
+            sheet.getRow(67).getCell(53+monthIndex).setCellValue(proc)
+        }
+
+        response.setHeader("Content-disposition", /attachment; filename=lonsamhetsmodell.xlsx/)
+        response.contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        excelFile.write(response.outputStream)
+        response.outputStream.flush()
+        response.outputStream.close()
+    }
     def profitabilityBasis() {
         DateTime startOfFiscalYear = new DateTime().withTimeAtStartOfDay().withDayOfMonth(1).withMonthOfYear(5)
 
