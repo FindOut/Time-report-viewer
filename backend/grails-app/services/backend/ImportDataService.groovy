@@ -2,6 +2,7 @@ package backend
 
 import grails.transaction.Transactional
 import grails.util.Holders
+import groovy.sql.Sql
 
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -12,7 +13,31 @@ class ImportDataService {
 
     def fileService
 
+    def clearDatabase(){
+        Sql sql = new Sql(dataSource.getConnection())
+        List applicationDomainObjects = grailsApplication.domainClasses*.clazz
+
+        sql.withBatch { sqlBatch ->
+            sqlBatch.addBatch("SET FOREIGN_KEY_CHECKS=0")
+
+            applicationDomainObjects.each{ object ->
+                String tableName = sessionFactory.getClassMetadata(object).tableName
+                sqlBatch.addBatch("Truncate table $tableName")
+            }
+
+            // This needs to be done explicitly since there is no domain object for it
+            sqlBatch.addBatch("Truncate table monthly_report_activity_report")
+            sqlBatch.addBatch("SET FOREIGN_KEY_CHECKS=1")
+        }
+    }
+
     def importDataFromDropbox() {
+
+        // This needs to be done when loading data from the time reports. The reason for this is that the application is
+        // not updating existing data properly.
+        clearDatabase()
+
+
         String url = Holders.config.dropbox.time_report.folder.url
         ZipFile zipFile = fileService.downloadZipFromUrl(url)
 

@@ -75,7 +75,7 @@ module.exports = {
                 }));
                 var link = document.createElement('A');
                 link.setAttribute('href', url);
-                link.setAttribute('Download', 'Lönsamhetsmodell.xlsx');
+                link.setAttribute('Download', 'Lonsamhetsmodell.xlsx');
                 link.appendChild(document.createTextNode('Download'));
                 link.click();
                 //document.getElementsByTagName('body')[0].prependChild(link);

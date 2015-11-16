@@ -1,14 +1,15 @@
 var webpack = require('webpack');
+var path = require('path');
 
 module.exports = {
 
     entry: {
-        app: "./source",
+        app: "./source/index",
         plugins: ['react','reflux','lodash','react-highcharts','moment']
     },
 
     output: {
-        path: __dirname + '/app/',
+        path: path.join(__dirname, '/app/'),
         //publicPath: 'http://localhost:3000/app/',
         filename: 'bundle.js'
     },
