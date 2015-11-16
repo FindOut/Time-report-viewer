@@ -11,11 +11,13 @@ import java.util.zip.ZipFile
 class ImportDataService {
     static transactional = false
 
+    def dataSource
+    def sessionFactory
     def fileService
 
     def clearDatabase(){
         Sql sql = new Sql(dataSource.getConnection())
-        List applicationDomainObjects = grailsApplication.domainClasses*.clazz
+        List applicationDomainObjects = Holders.getGrailsApplication().domainClasses*.clazz
 
         sql.withBatch { sqlBatch ->
             sqlBatch.addBatch("SET FOREIGN_KEY_CHECKS=0")

@@ -3,8 +3,6 @@ package backend
 import grails.plugin.springsecurity.annotation.Secured
 
 class PageController {
-    def dataSource
-    def sessionFactory
     def importDataService
 
     @Secured(['IS_AUTHENTICATED_FULLY'])
