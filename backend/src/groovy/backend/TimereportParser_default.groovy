@@ -225,7 +225,7 @@ class TimereportParser_default {
     }
 
     private OfferArea findOrSaveOfferAreaByName(String offerAreaName){
-        OfferArea offerArea = offerAreas.find{it.name == offerAreaName}
+        OfferArea offerArea = offerAreas.find{it.name.toLowerCase() == offerAreaName.toLowerCase()}
         if(!offerArea){
             offerArea = new OfferArea(name: offerAreaName)
             offerArea.save()
@@ -236,7 +236,7 @@ class TimereportParser_default {
     }
 
     private findOrSaveActivity(activityName, offerArea){
-        Activity activity = activities.find{it.name == activityName && it.offerArea.id == offerArea.id}
+        Activity activity = activities.find{it.name.toLowerCase() == activityName.toLowerCase() && it.offerArea.id == offerArea.id}
         if(!activity){
             activity = new Activity(
                     name: activityName,

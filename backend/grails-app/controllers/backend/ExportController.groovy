@@ -79,11 +79,10 @@ class ExportController {
             sheet.getRow(67).getCell(53+monthIndex).setCellValue(proc)
         }
 
-        response.setHeader("Content-disposition", /attachment; filename=lonsamhetsmodell.xlsx/)
-        response.contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        excelFile.write(response.outputStream)
-        response.outputStream.flush()
-        response.outputStream.close()
+        File localFile = new File('temp/' + System.currentTimeMillis() + '_lonsamhetsmodell.xlsx')
+        excelFile.write(localFile.newOutputStream())
+
+        render localFile.name
     }
     def profitabilityBasis() {
         DateTime startOfFiscalYear = new DateTime().withTimeAtStartOfDay().withDayOfMonth(1).withMonthOfYear(5)
@@ -104,6 +103,7 @@ class ExportController {
         ]
 
         Workbook excelFile = new XSSFWorkbook()
+
         excelFile.createSheet('Utfall timmar intäkter')
 
         Sheet sheet = excelFile.getSheetAt(0)
@@ -175,7 +175,7 @@ class ExportController {
         double totalSkillsDevelopment = totalWorkdayActivities.findAll{it[0].name.contains('Kompetensutveckling')}*.getAt(1).sum() ?:0
         double totalOH = totalWorkdayActivities.find{it[0].name == 'OH (används endast av OH personal)'}?.getAt(1)?:0
 
-        double totalProductionCapacity = (totalOfferAreas.find{it.key != 'Other time'}*.value.sum() ?: 0) - totalOH
+        double totalProductionCapacity = (totalOfferAreas.find{it.key != 'Other time'}*.value?.sum() ?: 0) - totalOH
 
 
         // gets monthly data for offerAreas and activities
@@ -279,10 +279,10 @@ class ExportController {
         sheet.getRow(25).getCell(2).setCellValue(totalVacation)
         sheet.getRow(26).getCell(2).setCellValue(totalParentalLeave)
 
-        response.setHeader("Content-disposition", /attachment; filename=input till lonsamhetsmodell.xlsx/)
-        response.contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        excelFile.write(response.outputStream)
-        response.outputStream.flush()
-        response.outputStream.close()
+
+        File file = new File('temp/' + System.currentTimeMillis() + '_input till lonsamhetsmodell.xlsx')
+        excelFile.write(file.newOutputStream())
+
+        render file.name
     }
 }

@@ -121,6 +121,7 @@ log4j.main = {
 // #################
 
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
+        '/page/fetchFile': ['permitAll'],
         '/**': ['IS_AUTHENTICATED_FULLY']
 ]
 //cors config.

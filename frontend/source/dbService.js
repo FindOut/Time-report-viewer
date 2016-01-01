@@ -14,54 +14,23 @@ module.exports = {
         }.bind(this));
     },
     download: function(uri){
-
-        var createObjectURL = function (file) {
-                if (window.webkitURL) {
-                    return window.webkitURL.createObjectURL(file);
-                } else if (window.URL && window.URL.createObjectURL) {
-                    return window.URL.createObjectURL(file);
-                } else {
-                    return null;
-                }
-            },
-            xhr = new XMLHttpRequest();
+        var xhr = new XMLHttpRequest();
         xhr.open('GET', AppConfig.serverURL + uri, true);
         xhr.setRequestHeader('x-auth-token', AppConfig.accessToken.access_token);
-        xhr.responseType = 'blob';
 
         xhr.onload = function (e) {
             if (this.status == 200) {
-                var url = createObjectURL(new Blob([this.response], {
-                    type: 'application/vnd.ms-excel'
-                }));
-                var link = document.createElement('A');
-                link.setAttribute('href', url);
-                link.setAttribute('Download', 'profitability_basis.xlsx');
-                link.appendChild(document.createTextNode('Download'));
-                link.click();
-                //document.getElementsByTagName('body')[0].prependChild(link);
-
+                window.open(AppConfig.serverURL.replace('/api', '') + '/page/fetchFile/' + '?serverFileName=' + this.response);
             }
         };
         xhr.send();
     },
 
     downloadWithData: function(uri, data){
-        var createObjectURL = function (file) {
-                if (window.webkitURL) {
-                    return window.webkitURL.createObjectURL(file);
-                } else if (window.URL && window.URL.createObjectURL) {
-                    return window.URL.createObjectURL(file);
-                } else {
-                    return null;
-                }
-            },
-            xhr = new XMLHttpRequest(),
+        var xhr = new XMLHttpRequest(),
             formData = new FormData();
 
         formData.append('file', data);
-
-
 
         xhr.open('POST', AppConfig.serverURL + uri, true);
         xhr.setRequestHeader('x-auth-token', AppConfig.accessToken.access_token);
@@ -70,16 +39,7 @@ module.exports = {
 
         xhr.onload = function (e) {
             if (this.status == 200) {
-                var url = createObjectURL(new Blob([this.response], {
-                    type: 'application/vnd.ms-excel'
-                }));
-                var link = document.createElement('A');
-                link.setAttribute('href', url);
-                link.setAttribute('Download', 'Lonsamhetsmodell.xlsx');
-                link.appendChild(document.createTextNode('Download'));
-                link.click();
-                //document.getElementsByTagName('body')[0].prependChild(link);
-
+                window.open(AppConfig.serverURL.replace('/api', '') + '/page/fetchFile/' + '?serverFileName=' + this.response);
             }
         };
         xhr.send(formData);
