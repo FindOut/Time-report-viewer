@@ -13,7 +13,7 @@ class TimereportParser_default {
     Employee EMPLOYEE = null
 
     // The fiscal year this parser is valid for
-    private List TIMEREPORT_PARSER_YEAR = [2014, 2015]
+    private List TIMEREPORT_PARSER_YEAR = [2014, 2015, 2016]
     // Index of first sheet with a date
     private int FIRST_REPORT_SHEET= 1
     // Location of the date cell for each report month
